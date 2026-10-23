@@ -1,0 +1,18 @@
+{
+ "_nota": "Pistas ancladas al guion: tiempos 'L3', 'L3.end', 'L3:palabra', 'L3-0.2', 'inicio', 'fin'. Ver references/blocking.md",
+ "personajes": {
+  "SANTI": {
+   "lugar": [["inicio", "principal"]],
+   "mira_a": [["inicio", "auto"]],
+   "expresion": [["inicio", "nervioso"], ["L3", "alivio"], ["L4:bueno", "sorpresa"]],
+   "gestos": [["inicio", "regazo"], ["L1.end", "abraza_mascota"]],
+   "acciones": [["L3", "suspiro"], ["L4:bueno", "sobresalto"]]
+  },
+  "CLAWD": {
+   "lugar": [["inicio", "bajo_escritorio"], ["L1-0.2", "asomado"], ["L1.end+0.05", "SANTI.regazo"]],
+   "expresion": [["inicio", "normal"], ["L2", "calm"], ["L4", "happy"]],
+   "brazos": [["inicio", "abajo"], ["L4", "senala"]]
+  }
+ },
+ "props": {"puerta": [["inicio", -72]]}
+}

@@ -1,0 +1,14 @@
+{
+ "_nota": "Ver references/personajes.md (humanos: cara, piel, pelo, ropa, accesorios; mascotas: clawd | chatgpt | gemini | mascota) y references/casting.md (voces)",
+ "personajes": {
+  "SANTI": {
+   "tipo": "humano", "voz": "qGrxMQgsw74f3cWR4I0K", "postura": "sentado", "lugar": "principal",
+   "cara": {"preset": "A", "nariz": 0.88, "ojos_color": "#4A2A18"},
+   "piel": "#D4956C",
+   "pelo": {"estilo": "copete", "color": "#1A1511"},
+   "ropa": {"estilo": "camiseta", "torso": "#D6C7A8", "piernas": "#3C4250", "zapatos": "#ECE5D8"},
+   "accesorios": ["gafete", "lunares"]
+  },
+  "CLAWD": {"tipo": "clawd", "voz": "9EU0h6CVtEDS6vriwwq5", "alto": 1.225}
+ }
+}

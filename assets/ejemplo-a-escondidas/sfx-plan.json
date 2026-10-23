@@ -1,0 +1,135 @@
+[
+ {
+  "t": 0.83,
+  "sfx": "pop1",
+  "gain_db": -9,
+  "rate": 1.0,
+  "uso": "Clawd se asoma bajo el escritorio"
+ },
+ {
+  "t": 2.26,
+  "sfx": "whoosh2",
+  "gain_db": -17,
+  "rate": 1.15,
+  "uso": "salto al regazo"
+ },
+ {
+  "t": 10.49,
+  "sfx": "whoosh2",
+  "gain_db": -18,
+  "rate": 1.25,
+  "uso": "Clawd salta al escritorio"
+ },
+ {
+  "t": 19.907,
+  "sfx": "click1",
+  "gain_db": -11,
+  "rate": 1.0,
+  "uso": "aparece la presentación"
+ },
+ {
+  "t": 22.755,
+  "sfx": "pop2",
+  "gain_db": -14,
+  "rate": 1.1,
+  "uso": "«De mí»"
+ },
+ {
+  "t": 33.264,
+  "sfx": "door",
+  "gain_db": -3,
+  "rate": 1.0,
+  "uso": "portazo: entra el jefe"
+ },
+ {
+  "t": 33.344,
+  "sfx": "whoosh2",
+  "gain_db": -13,
+  "rate": 0.9,
+  "uso": "Clawd se lanza al cajón"
+ },
+ {
+  "t": 33.864,
+  "sfx": "click1",
+  "gain_db": -10,
+  "rate": 0.7,
+  "uso": "se cierra el cajón"
+ },
+ {
+  "t": 39.495,
+  "sfx": "riser1",
+  "gain_db": -15,
+  "rate": 1.0,
+  "uso": "tensión creciente bajo el duelo (pico en la mirada final)"
+ },
+ {
+  "t": 42.144,
+  "sfx": "impact2",
+  "gain_db": -11,
+  "rate": 1.0,
+  "uso": "impacto seco en la mirada final"
+ },
+ {
+  "t": 42.394,
+  "sfx": "bell1",
+  "gain_db": -16,
+  "rate": 1.0,
+  "uso": "campana breve en la mirada final"
+ },
+ {
+  "t": 49.415,
+  "sfx": "printer_slow",
+  "gain_db": -20,
+  "rate": 1.0,
+  "uso": "el recibo empieza a imprimirse"
+ },
+ {
+  "t": 56.534,
+  "sfx": "printer_fast",
+  "gain_db": -15,
+  "rate": 1.0,
+  "uso": "el recibo se desenrolla de golpe"
+ },
+ {
+  "t": 56.964,
+  "sfx": "paperslap",
+  "gain_db": -12,
+  "rate": 1.0,
+  "uso": "el recibo llega al piso"
+ },
+ {
+  "t": 57.014,
+  "sfx": "chaching",
+  "gain_db": -11,
+  "rate": 1.0,
+  "uso": "cha-ching de caja registradora"
+ },
+ {
+  "t": 68.464,
+  "sfx": "impact1",
+  "gain_db": -9,
+  "rate": 1.0,
+  "uso": "remate: todos tienen IA"
+ },
+ {
+  "t": 68.564,
+  "sfx": "pop1",
+  "gain_db": -13,
+  "rate": 1.0,
+  "uso": "IA Beto"
+ },
+ {
+  "t": 68.814,
+  "sfx": "pop1",
+  "gain_db": -13,
+  "rate": 1.12,
+  "uso": "IA Lupe"
+ },
+ {
+  "t": 69.064,
+  "sfx": "pop1",
+  "gain_db": -13,
+  "rate": 1.25,
+  "uso": "IA Iván"
+ }
+]

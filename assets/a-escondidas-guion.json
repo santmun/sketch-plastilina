@@ -1,0 +1,157 @@
+{
+ "voces": {
+  "SANTI": "qGrxMQgsw74f3cWR4I0K",
+  "CLAWD": "9EU0h6CVtEDS6vriwwq5",
+  "JEFE": "OLmSqlYzB06EIKJRy5b0",
+  "CHATGPT": "jbWMqMKDKL7X0v1DXTHH",
+  "GEMINI": "qWWAqFomnJ99VwQLREfT",
+  "MARIANA": "p18tR9wFA5Ng9WhfWI0o"
+ },
+ "lineas": [
+  [
+   "SANTI",
+   "[whispers] [nervous] Claude... ¿mi jefe sabe que tú haces mi trabajo?",
+   0.24
+  ],
+  [
+   "CLAWD",
+   "[whispers] [calm] No.",
+   0.17
+  ],
+  [
+   "SANTI",
+   "[relieved sigh] Uf.",
+   0.21
+  ],
+  [
+   "CLAWD",
+   "[whispers] Cree que eres muy bueno.",
+   0.17
+  ],
+  [
+   "SANTI",
+   "[pleasantly surprised] ...¿Ah, sí?",
+   0.15
+  ],
+  [
+   "CLAWD",
+   "[calm] Te ascendió.",
+   0.15
+  ],
+  [
+   "SANTI",
+   "[shocked] ¿¡Qué!?",
+   0.17
+  ],
+  [
+   "CLAWD",
+   "[matter-of-fact] Mañana capacitas a todo el equipo.",
+   0.15
+  ],
+  [
+   "SANTI",
+   "[panicked whisper] ¿¡En qué!?",
+   0.15
+  ],
+  [
+   "CLAWD",
+   "[calm] En cómo eres tan productivo.",
+   0.32
+  ],
+  [
+   "SANTI",
+   "[nervous] ...¿Y qué les voy a enseñar?",
+   0.15
+  ],
+  [
+   "CLAWD",
+   "[calm] Tranquilo. Ya te hice la presentación.",
+   0.15
+  ],
+  [
+   "SANTI",
+   "[suspicious] ¿De qué trata?",
+   0.15
+  ],
+  [
+   "CLAWD",
+   "[matter-of-fact] De mí.",
+   0.28
+  ],
+  [
+   "SANTI",
+   "[softly] [sad] ...¿Hay algo que hice yo solo esta semana?",
+   0.24
+  ],
+  [
+   "CLAWD",
+   "[gently] Una cosa. Le llevaste café a Mariana cuando lloró en el baño.",
+   0.42
+  ],
+  [
+   "SANTI",
+   "[tender] [quietly] ...Eso no lo pongas en la presentación.",
+   0.63
+  ],
+  [
+   "JEFE",
+   "[suspicious] Santi... ¿cuatro meses de reporte en una tarde?",
+   0.21
+  ],
+  [
+   "SANTI",
+   "[nervous smile] Yo solito, jefe. A mano.",
+   1.6
+  ],
+  [
+   "CHATGPT",
+   "[whispers] [smug] A mano... con Claude.",
+   0.21
+  ],
+  [
+   "CLAWD",
+   "[whispers] [offended] Dile que su ChatGPT es una copia barata de mí.",
+   0.21
+  ],
+  [
+   "CHATGPT",
+   "[smug] ¿Copia? Tu humano me escribió anoche a las tres de la mañana.",
+   0.42
+  ],
+  [
+   "CLAWD",
+   "[hurt] [slowly] ...¿Le escribiste?",
+   0.35
+  ],
+  [
+   "SANTI",
+   "[guilty] [quietly] ...Fue una vez.",
+   0.28
+  ],
+  [
+   "CHATGPT",
+   "[matter-of-fact] Cuarenta y siete.",
+   0.63
+  ],
+  [
+   "JEFE",
+   "[whispers] ...Nadie vio nada.",
+   0.21
+  ],
+  [
+   "SANTI",
+   "[whispers] Nadie vio nada.",
+   1.0
+  ],
+  [
+   "GEMINI",
+   "[whispers] [playful] Mariana... si te pregunta, lloraste por la junta. No por mí.",
+   0.35
+  ],
+  [
+   "MARIANA",
+   "[deadpan] [softly] ...Ya te perdoné.",
+   1.0
+  ]
+ ]
+}
