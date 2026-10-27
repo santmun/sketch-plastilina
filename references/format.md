@@ -7,8 +7,9 @@ estructura se mantiene.
 ## Por qué funciona (reglas para cualquier tema)
 
 1. **Situación real y reconocible para la audiencia del usuario**: algo que vive o teme (el cliente que pregunta
-   lo mismo diez veces, la junta que pudo ser un correo, el producto que nadie lee las instrucciones). Si hay una IA,
-   una mascota o un producto que habla, es un personaje con carácter, no un adorno.
+   lo mismo diez veces, la junta que pudo ser un correo, el producto que nadie lee las instrucciones). La historia no
+   necesita una IA: los personajes pueden ser solo personas, animales, objetos o productos. Si hay alguien que no es
+   humano, es un personaje con carácter, no un adorno.
 2. **Gancho en 2 s**: la premisa completa en la primera línea, idealmente un secreto o una pregunta.
 3. **Revelaciones que escalan**: cada respuesta es corta y tranquila y empeora la situación. El contraste de energía
    (uno nervioso, otro impasible) es el motor cómico.
@@ -49,8 +50,34 @@ Para 30 s: gancho, un escalón, revelación y remate. Para 90 s: dos escalones y
 - **Juguetes que se hacen los muertos** cuando entra un humano (pose inerte), y el nuevo que no sabe hacerlo.
 - **Risas encimadas** de varios personajes y **entrada de suspenso** (silencio, objeto que tiembla y brilla, impacto).
 
-## Ideas de situaciones para arrancar
+## Tonos de humor (elige uno con el usuario y mantenlo en todo el guion)
 
-El médico que diagnostica con IA y el paciente también; la cita donde los dos usan IA para chatear; el estudiante
-cuyo profe usa la misma IA para calificar; el producto que habla y se queja de cómo lo usan; el vendedor y el
-cliente que negocian por medio de sus asistentes; la receta «de la abuela» que salió de internet.
+| Tono | Cómo se siente | Cómo se escribe y se filma |
+|---|---|---|
+| **Sarcástico / deadpan** | alguien dice lo peor con toda calma | réplicas cortas y secas (`[deadpan]`, `[dry]`), pausas antes del remate, close fijo del que no reacciona |
+| **Absurdo** | una premisa imposible tratada como normal | reglas raras que nadie cuestiona, escalada lógica dentro de lo ilógico, planos generales para ver el absurdo |
+| **Tierno** | ternura con un toque cómico | voces suaves (`[softly]`, `[warmly]`), un beat emocional, colores cálidos de día, final que reconcilia |
+| **Telenovela** | drama exagerado por algo trivial | revelaciones con zoom y sacudida, música de tensión, `[gasps]`, `[dramatic]`, cortes a la cara de cada uno |
+| **Mockumentary** | entrevistas a cámara intercaladas con la escena | personajes que confiesan a cámara (mira_a `frente`), planos fijos tipo entrevista, ironía entre lo que dicen y lo que se ve |
+| **Thriller / suspenso cómico** | algo mínimo tratado como misterio | silencios largos, luz de noche, objetos que tiemblan o brillan, golpe de sonido en la revelación |
+| **Cringe / incómodo** | silencios que duelen | pausas largas a propósito, plano general quieto, nadie dice nada, una tos |
+| **Parodia de comercial** | anuncio exagerado de algo cotidiano | locutor entusiasta (`[excited]`), producto en close con luz de estudio, letras en pantalla, «aplican restricciones» |
+| **Infantil / fábula** | moraleja con personajes simples | mascotas u objetos que hablan, frases cortas, colores vivos, un narrador |
+| **Terror cómico** | miedo que termina en algo ridículo | luz baja y fría, susurros (`[whispers]`), un susto con sacudida y un remate tonto |
+
+Se pueden mezclar dos (tierno + absurdo, telenovela + mockumentary), pero uno manda. El tono decide las etiquetas
+de voz, el ritmo de cortes, la luz y la música.
+
+## Ideas de situaciones para arrancar (cualquier tema)
+
+- **Trabajo**: la junta que pudo ser un correo; el compañero que responde «visto» y nada más; el cliente que pide
+  «algo sencillo» para mañana.
+- **Negocios y ventas**: el producto que se queja de cómo lo usan; el vendedor que no deja de vender ni en la fila
+  del súper; la tienda donde el letrero de «abierto» tiene opinión propia.
+- **Familia y casa**: el grupo familiar de WhatsApp; la mamá que esconde el control remoto; el refri que juzga lo
+  que cenas.
+- **Escuela**: el examen sorpresa; el trabajo en equipo donde uno solo trabaja; la mochila que lo ha visto todo.
+- **Salud y deporte**: el primer día en el gimnasio; el paciente que ya se autodiagnosticó en internet.
+- **Mascotas**: el perro que finge que nadie le dio de comer; el gato que exige reunión con el dueño.
+- **Tecnología e IA** (si el tema lo pide): la cita donde los dos chatean con ayuda de una IA; el estudiante cuyo
+  profe usa la misma IA para calificar; las IAs que hacen su propia junta cuando nadie las ve.

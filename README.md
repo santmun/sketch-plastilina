@@ -2,7 +2,7 @@
 
 # Sketch de plastilina
 
-**Sketches cómicos en 3D de plastilina sobre el tema que quieras, con personajes que hablan.**
+**Sketches cómicos en 3D de plastilina sobre el tema que quieras, en el tono que quieras, con personajes que hablan.**
 
 Un skill de Claude Code con motor propio en Blender. Le cuentas tu tema y te pregunta lo necesario: de qué
 trata, quién protagoniza (tú, alguien inventado, una mascota o tu producto), dónde pasa y qué tono quieres.
@@ -20,6 +20,8 @@ subtítulos, SFX y mezcla.
 - **Se adapta a ti**: tema, elenco, set, idioma y estilo salen de tus respuestas. La plantilla es neutra.
 - **Tu avatar, el que quieras**: te modela a ti a partir de una foto, inventa un personaje, o hace que hable una
   mascota, un producto o una IA (hay Clawd, ChatGPT, Gemini, Meta AI, Grok y DeepSeek listas).
+- **Cualquier tema y cualquier tono**: trabajo, ventas, familia, escuela, mascotas, tu producto (la IA es solo una
+  opción); sarcástico, absurdo, tierno, telenovela, mockumentary, parodia de comercial y más.
 - **Formato de sketch que funciona**: gancho en 2 s, revelaciones que escalan, remate y giro final.
 - **Todos hablan con lip-sync**: la boca de cada personaje sigue su voz, cuadro por cuadro.
 - **Muchos cortes**: closes, planos sobre el hombro, duelos de miradas y un micro push-in/out en cada plano.

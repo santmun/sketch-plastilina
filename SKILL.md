@@ -1,12 +1,13 @@
 ---
 name: sketch-plastilina
-description: Sketch cómico vertical (9:16, 30-90 s) en 3D de plastilina, sobre el tema que pida el usuario, con personajes que hablan — humanos (incluido el propio usuario como avatar), mascotas, productos o IAs (Clawd, ChatGPT, Gemini, Meta AI, Grok, DeepSeek). Pregunta primero qué quiere el usuario (tema, protagonista, avatar, set, tono y estilo) y propone conceptos con el formato de sketch que funciona — gancho, revelaciones que escalan, remate y giro final —; bocas con lip-sync, muchos cortes con micro push-in, subtítulos quemados y SFX a −14 LUFS. Las voces y tiempos salen de la vía que tenga el usuario (API o MCP de ElevenLabs, grabaciones propias, AssemblyAI, Whisper). Úsalo cuando el usuario diga «haz un sketch de plastilina sobre X», «un video animado 3D de plastilina», «sketch animado con personajes que hablan», «una escena 3D clay con diálogo», o pida un sketch con mascotas o productos que hablan. Motor propio en Blender 5.x (EEVEE, sin interfaz) en macOS, Linux y Windows; la primera vez revisa e instala lo necesario con scripts/doctor.py. NO es para clips generados con IA de video ni motion graphics.
+description: Sketch cómico vertical (9:16, 30-90 s) en 3D de plastilina, sobre cualquier tema que pida el usuario (no tiene que ser de IA), con personajes que hablan — humanos (incluido el propio usuario como avatar), animales, mascotas, productos u objetos, o IAs (Clawd, ChatGPT, Gemini, Meta AI, Grok, DeepSeek). Pregunta primero qué quiere el usuario (tema, protagonista, avatar, set, tono de humor — sarcástico, absurdo, tierno, telenovela, mockumentary… — y estilo) y propone conceptos con el formato de sketch que funciona — gancho, revelaciones que escalan, remate y giro final —; bocas con lip-sync, muchos cortes con micro push-in, subtítulos quemados y SFX a −14 LUFS. Las voces y tiempos salen de la vía que tenga el usuario (API o MCP de ElevenLabs, grabaciones propias, AssemblyAI, Whisper). Úsalo cuando el usuario diga «haz un sketch de plastilina sobre X», «un video animado 3D de plastilina», «sketch animado con personajes que hablan», «una escena 3D clay con diálogo», o pida un sketch con mascotas o productos que hablan. Motor propio en Blender 5.x (EEVEE, sin interfaz) en macOS, Linux y Windows; la primera vez revisa e instala lo necesario con scripts/doctor.py. NO es para clips generados con IA de video ni motion graphics.
 ---
 
 # Sketch de plastilina
 
-Un sketch de diálogo vertical en plastilina 3D sobre **el tema del usuario**: una situación que su audiencia
-reconoce, contada en revelaciones que escalan, con remate y giro final. Cada personaje que habla tiene boca
+Un sketch de diálogo vertical en plastilina 3D sobre **el tema del usuario**, sea cual sea (trabajo, ventas, familia,
+escuela, salud, mascotas, un producto; la IA es solo un tema más): una situación que su audiencia reconoce, contada en
+revelaciones que escalan, con remate y giro final, en el tono de humor que elija. Cada personaje que habla tiene boca
 sincronizada con su voz. Muchos cortes, closes y un micro push-in/out en cada plano.
 
 El estilo de plastilina, la animación y la gramática de planos son el punto de partida, no una plantilla
@@ -81,14 +82,17 @@ preguntas por ronda, con opciones recomendadas):
   avatar ni la voz de otra persona.
 - **Elenco**: quién más aparece (compañeros, clientes, IAs, mascotas, productos de la competencia…).
 - **Set**: oficina de noche, sala de juntas, cafetería, o uno nuevo (su tienda, su consultorio, su aula…).
-- **Tono y estilo**: plastilina (default) de noche, de día o atardecer; colores de su marca; humor más seco o más
-  tierno. Si quiere otro estilo visual, se ajustan materiales, luz y paleta.
+- **Tono de humor**: ofrece 3-4 opciones que encajen con su tema (sarcástico/deadpan, absurdo, tierno, telenovela,
+  mockumentary, suspenso cómico, cringe, parodia de comercial, fábula, terror cómico; tabla en
+  `references/format.md`).
+- **Estilo visual**: plastilina (default) de noche, de día o atardecer; colores de su marca. Si quiere otro estilo,
+  se ajustan materiales, luz y paleta.
 - **Idioma, duración y plataforma**: español por default; 30-90 s; Reels/TikTok/Shorts (9:16).
 
 Resúmelo en un brief de 5-8 líneas y confírmalo.
 
-**2. Concepto → 3 opciones.** Para cada una: premisa en una línea, elenco, set, 3 revelaciones que escalan, remate
-y giro. Usa la estructura de `references/format.md` aplicada **a su tema** (no a otro video). **Espera a que elija.**
+**2. Concepto → 3 opciones.** Para cada una: premisa en una línea, tono, elenco, set, 3 revelaciones que escalan,
+remate y giro. Si el usuario no eligió tono, varía el tono entre las opciones. Usa la estructura de `references/format.md` aplicada **a su tema** (no a otro video). **Espera a que elija.**
 
 **3. Guion → aprobación.** Líneas con etiquetas de emoción y pausas (`references/guion.md`), frases que una persona
 diría de verdad. Revisa coherencia interna (fechas, números, quién sabe qué). **No sigas sin aprobación.**
