@@ -1,5 +1,5 @@
 # tts.py — una toma de ElevenLabs (v4 por default) por línea del guion, con la voz de cada personaje (cast.json).
-#   doppler run --project editorbrain --config dev -- python3 tts.py <proyecto> [--solo 3,5] [--modelo eleven_v4] [--forzar]
+#   python3 tts.py <proyecto> [--solo 3,5] [--modelo eleven_v4] [--forzar]   (llave: ELEVENLABS_API_KEY en el entorno o en .env)
 # -> <proyecto>/audio/lineas/NN_QUIEN.mp3 + manifest.json (no regenera líneas sin cambios). Nunca imprime la llave.
 import hashlib, json, os, sys, time, urllib.request, urllib.error
 
@@ -11,9 +11,9 @@ def opt(name, default=None):
     return argv[argv.index(name) + 1] if name in argv else default
 
 
-KEY = os.environ.get('ELEVENLABS_API_KEY')
-if not KEY:
-    sys.exit('falta ELEVENLABS_API_KEY: corre con  doppler run --project editorbrain --config dev -- python3 tts.py ...')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import entorno
+KEY = entorno.require_key('ELEVENLABS_API_KEY', P)
 guion = json.load(open(os.path.join(P, 'guion.json')))
 cast = json.load(open(os.path.join(P, 'cast.json')))['personajes']
 model = opt('--modelo', guion.get('modelo', 'eleven_v4'))
@@ -54,6 +54,12 @@ for i, ln in enumerate(guion['lineas'], 1):
             if e.code in (429, 500, 502, 503) and attempt < 2:
                 time.sleep(3 * (attempt + 1))
                 continue
+            if 'voice_not_found' in msg or (e.code == 404 and 'voice' in msg.lower()):
+                sys.exit(f'línea {i}: la voz {voice} de {who} no está en tu cuenta de ElevenLabs. Elige una con  '
+                         f'python3 {os.path.dirname(os.path.abspath(__file__))}/voces.py --es  (o agrégala desde la Voice '
+                         f'Library) y cámbiala en cast.json.')
+            if e.code in (401, 403) or 'quota' in msg.lower() or 'credits' in msg.lower():
+                sys.exit(f'línea {i}: ElevenLabs {e.code}: revisa tu llave y que tu plan tenga créditos ({msg[:160]})')
             sys.exit(f'línea {i}: ElevenLabs {e.code}: {msg}')
     open(fn, 'wb').write(data)
     man[f'{i:02d}'] = sig

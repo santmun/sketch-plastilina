@@ -1,5 +1,5 @@
 # clay.py — utilidades de plastilina (geometría + materiales). Extraído de «A escondidas» sin cambios de look.
-import bpy, bmesh, math, os, random
+import bpy, bmesh, math, os, random, sys
 from mathutils import Vector, Matrix, Euler, Quaternion
 
 D = math.radians
@@ -273,8 +273,18 @@ def load_font(*paths):
     return None
 
 
+def _system_fonts():
+    """negritas de Windows/Linux (y las de assets/fonts) por si no están las de macOS"""
+    try:
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts'))
+        import entorno
+        return entorno.font_files_for_blender()
+    except Exception:
+        return []
+
+
 FONT_BOLD = load_font('/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf',
-                      '/System/Library/Fonts/Supplemental/Arial Bold.ttf')
+                      '/System/Library/Fonts/Supplemental/Arial Bold.ttf', *_system_fonts())
 
 
 # ============================================================================ materiales
@@ -395,6 +405,12 @@ def simple(name, color, rough=0.5, metal=0.0, emit=None, estr=0.0, coat=0.0, alp
     bs.inputs['Metallic'].default_value = metal
     bs.inputs['Coat Weight'].default_value = coat
     bs.inputs['Transmission Weight'].default_value = trans
+    if alpha < 1.0:
+        bs.inputs['Alpha'].default_value = alpha
+        try:
+            m.surface_render_method = 'BLENDED'
+        except Exception:
+            pass
     if emit:
         bs.inputs['Emission Color'].default_value = hexc(emit)
         bs.inputs['Emission Strength'].default_value = estr

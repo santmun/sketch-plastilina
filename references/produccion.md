@@ -16,17 +16,18 @@
 ## Render
 
 ```bash
-df -h /System/Volumes/Data                      # si hay < ~8 GB, libera antes
-$SK/engine/render.sh <dir> draft                # 360x640, 4 muestras: revisión de puesta en escena
-$SK/engine/render.sh <dir> review               # 720x1280, 12 muestras -> review-v1.mp4 (<23 MB) para Santi
-VER=v1 $SK/engine/render.sh <dir> final         # 1080x1920, 40 muestras -> <nombre>-v1.mp4 + -preview.mp4
+python3 $SK/scripts/doctor.py                     # disco libre, Blender, ffmpeg (si hay < ~8 GB, libera antes)
+python3 $SK/scripts/render.py <dir> draft         # 360x640, 4 muestras: revisión de puesta en escena
+python3 $SK/scripts/render.py <dir> review        # 720x1280, 12 muestras -> review-v1.mp4 (<23 MB) para aprobar
+python3 $SK/scripts/render.py <dir> final --ver v1   # 1080x1920, 40 muestras -> <nombre>-v1.mp4 + -preview.mp4
 ```
 - Renderiza por tramos de 240 cuadros (`STEP`), **un solo Blender a la vez**. Antes de cada tramo revisa el disco;
   si baja de `MINFREE` (8 GB) espera hasta 40 min y luego se detiene. Los tramos que ya existen se saltan
-  (`FORCE=1` para rehacer). Cada tramo es un proceso nuevo: todo lo aleatorio está sembrado (no hay saltos entre tramos).
+  (`--forzar` para rehacer; hazlo siempre que cambie el blocking, los planos o el set: un tramo viejo se mezclaría con el nuevo). Cada tramo es un proceso nuevo: todo lo aleatorio está sembrado (no hay saltos entre tramos).
 - Referencia de tiempos (M-series, café de prueba): 360 px / 4 muestras ≈ 0.2 s por cuadro. El final a 1080/40 es
   mucho más lento: mide el primer tramo y estima antes de lanzar 70 s completos.
-- `render.sh` corre `mix.py` antes y `assemble.py` después (subtítulos PNG + mezcla).
+- `render.py` corre `mix.py` antes y `assemble.py` después (subtítulos PNG + mezcla). En macOS `engine/render.sh`
+  hace lo mismo (`VER`, `STEP`, `MINFREE`, `FORCE=1`).
 - **Disco**: se llena rápido. Después de verificar cada versión, borra lo superado: `renders/c*_*.mp4` de
   resoluciones viejas, `renders/subs_*`, `renders/log_*`, `test/`, versiones `review` anteriores. Nunca borres el
   final aprobado ni el audio. Un solo render por máquina a la vez.
@@ -40,12 +41,40 @@ VER=v1 $SK/engine/render.sh <dir> final         # 1080x1920, 40 muestras -> <nom
 - Lip-sync (automático): abertura por la envolvente RMS normalizada por línea, redondez en o/u, ancho en i,
   cierre en m/b/p (f/v a medias), menos abertura al susurrar.
 - `mix.py`: diálogo + tono de sala sintetizado según el set + SFX de `sfx.json` → **−14 LUFS**, pico ≤ −1.5 dBTP.
-  SFX del banco: `editorbrain sfx search … --query`, `sfx_fetch.py <id> <nombre> <dir>` (verifica SHA-256, no guarda
-  URLs firmadas). Sintetizados: `synth:puerta`, `impresora`, `caja_registradora`, `papel`, `golpe`, `ding`, `cajon`.
+  SFX: `sfx_gen.py <dir> <nombre> "descripción en inglés" --seg 1` (ElevenLabs Sound Effects), tus propios `.wav` en
+  `audio/sfx/`, o el banco de EditorBrain (`editorbrain sfx search … --query`, `sfx_fetch.py <id> <nombre> <dir>`,
+  verifica SHA-256 y no guarda URLs firmadas). Sintetizados: `synth:puerta`, `impresora`, `caja_registradora`, `papel`, `golpe`, `ding`, `cajon`.
   `corta_en` deja silencio limpio antes de un susurro o remate. `build/eventos.json` lista saltos y apariciones
-  para colocar pops y whooshes. **Sin silbido ni twang de western en el duelo** (Santi no lo quiso).
+  para colocar pops y whooshes. **Sin silbido ni twang de western en el duelo** (no funcionó en «A escondidas»).
 
-## Revisión (antes de mandar cualquier cosa a Santi)
+## Sets y sus parámetros (`look.json → set_params`)
+
+- **office_night** (la oficina de «A escondidas»): `diapositiva` (2 renglones), `diapositiva_por`, `taza`,
+  `placas` (`{"cubiculo_2": "DIRECTORA"}`: placa en el escritorio), `chat` (`{"prompt": "hazla bien", "saludo": "…"}`:
+  un chat en el monitor que se escribe letra por letra con el prop `tecleo`). Anclajes extra: `cubiculo_N_escritorio`
+  (mascota sobre el escritorio de cada cubículo).
+- **sala_juntas** (capacitación con proyector, atril y dos filas): `titulo1`/`titulo2`/`por` (portada), `s1_titulo`/
+  `s1_sub` (diapositiva 1), `empresa` (placa del atril), `hora: "noche"` (ciudad de noche, techo con prop `luces`,
+  pasillo cálido detrás de la puerta; usa `"luz": "noche"`), `luz_techo` (W), `mesita_vacia`, `caja_juguete`
+  (`{"pos", "cerrada", "color", "banda", "letras", "arriba", "abajo", "letrita"}`: caja de juguete con ventana o
+  cerrada con tapa que vuela). Anclajes: `atril`, `atril_dentro`/`atril_asoma`/`atril_arriba`, `mesita`, `pasillo`,
+  `entrando`, `puerta`, `caja_dentro`/`caja_borde`/`caja_frente`, `silla_junto_lucia`.
+- **cafe**. Looks: `noche`, `dia`, `atardecer` (sala_juntas con sol bajo por el ventanal).
+
+## Varias escenas, flashbacks y risas
+
+- **Un proyecto por set.** Si la historia cambia de lugar («Esa noche…»), haz otro proyecto y únelos:
+  `python3 $SK/scripts/unir.py final.mp4 escena1.mp4 escena2.mp4 --letrero "Esa noche…"` (el letrero va sobre los
+  primeros 2 s de la escena que sigue: dale `"entrada": 1.8` en su look.json para que no tape el primer subtítulo).
+- **Flashback** (un recuerdo en otro set): en la escena deja la pausa y la línea en off; renderiza el recuerdo como
+  proyecto aparte y mételo con `python3 $SK/scripts/flashback.py escena.mp4 recuerdo.mp4 <t_entra> <t_sale> salida.mp4`
+  (look cálido desaturado, viñeta, grano y destello; instrucciones de tiempos en el encabezado del script).
+- **Risas encimadas**: líneas `"[laughs hard] ¡Jajajaja!"` con pausa negativa (`-0.9`) se mezclan una encima de otra;
+  `subs.py` no les pone subtítulo. Combínalas con la acción `risa` de cada mascota.
+- **Suspenso**: silencio de 3 s después de la línea, prop que tiembla/brilla (`caja`, `caja_luz`), todos con
+  `mira_a` al objeto y ojos `wide`, cámara con `push` 0.8 y `dutch`, SFX de anticipación y un impacto al revelar.
+
+## Revisión (antes de mandar cualquier cosa al usuario)
 
 1. `scene.py --check` en 0 problemas (o justificados: el gafete rozando a la mascota al aterrizar, vidrio a propósito).
 2. Hoja de contactos del mp4 cada 0.25-0.5 s **y mírala**: bocas abiertas/cerradas con la voz, nadie atravesado,

@@ -1,12 +1,12 @@
 # transcribe.py — tiempos por palabra de AssemblyAI sobre audio/dialogo.wav (español) -> audio/palabras.json (ms).
-#   doppler run --project editorbrain --config dev -- python3 transcribe.py <proyecto>
+#   python3 transcribe.py <proyecto>   (llave: ASSEMBLYAI_API_KEY en el entorno o en .env)
 # Compara las palabras con el guion por línea y avisa si AssemblyAI escuchó algo distinto (revisa la toma).
 import json, os, re, sys, time, unicodedata, urllib.request
 
 P = os.path.abspath(sys.argv[1])
-KEY = os.environ.get('ASSEMBLYAI_API_KEY')
-if not KEY:
-    sys.exit('falta ASSEMBLYAI_API_KEY: corre con  doppler run --project editorbrain --config dev -- python3 transcribe.py ...')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import entorno
+KEY = entorno.require_key('ASSEMBLYAI_API_KEY', P)
 H = {'authorization': KEY, 'User-Agent': 'Mozilla/5.0'}
 
 

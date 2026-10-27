@@ -1,7 +1,7 @@
 # subs.py — subtítulos en trozos cortos (sin etiquetas de voz), tiempos de AssemblyAI, PNG por trozo.
 # Regla: un subtítulo NUNCA cruza un corte de plano (se parte en el corte y cada trozo toma la posición de su plano).
 #   python3 subs.py <proyecto> <ancho> [carpeta]  -> subs.json + PNGs
-import json, os, re, sys
+import difflib, json, os, re, sys, unicodedata
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 P = os.path.abspath(sys.argv[1])
@@ -16,25 +16,56 @@ shots = json.load(open(os.path.join(P, 'build', 'shots_resolved.json')))
 cuts = sorted(s['t'] for s in shots if s['t'] > 0.01)
 
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import entorno
+
+
 def font(size):
-    path = '/System/Library/Fonts/Avenir Next.ttc'
-    for i in range(12):
-        try:
-            f = ImageFont.truetype(path, size, index=i)
-        except Exception:
-            break
-        if f.getname()[1] in ('Bold',):
-            return f
-    return ImageFont.truetype('/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf', size)
+    return entorno.find_font(size)      # Avenir Next Bold en macOS; Arial/DejaVu negrita en Windows/Linux
 
 
 def clean(s):
     s = re.sub(r'\[[^\]]*\]', '', s)
+    s = re.sub(r'[«»“”"]', '', s)              # comillas fuera del subtítulo
     return re.sub(r'\s+', ' ', s).strip()
 
 
 WEAK = {'a', 'la', 'el', 'de', 'que', 'con', 'en', 'tan', 'mi', 'lo', 'le', 'tu', 'te', 'y', 'si', 'me', 'los', 'las', 'un',
         'una', 'por', 'su', 'se', 'no', 'del', 'al'}
+
+
+def norm(t):
+    t = unicodedata.normalize('NFD', t.lower())
+    return ''.join(c for c in t if c.isalnum())
+
+
+def align(toks, ws, t0, t1):
+    """tiempo de cada palabra del guion: empata con las palabras de AssemblyAI (aunque falte o sobre alguna) y solo
+    interpola por letras las que no oyó, entre sus vecinas empatadas"""
+    times = [None] * len(toks)
+    sm = difflib.SequenceMatcher(None, [norm(t) for t in toks], [norm(w['text']) for w in ws], autojunk=False)
+    for blk in sm.get_matching_blocks():
+        for k in range(blk.size):
+            w = ws[blk.b + k]
+            times[blk.a + k] = (w['start'] / 1000, w['end'] / 1000)
+    k = 0
+    while k < len(toks):
+        if times[k] is not None:
+            k += 1
+            continue
+        j = k
+        while j < len(toks) and times[j] is None:
+            j += 1
+        a = times[k - 1][1] if k > 0 else t0
+        b = times[j][0] if j < len(toks) else max(t1, a + 0.05)
+        tot = sum(len(t) + 1 for t in toks[k:j])
+        acc = 0
+        for m in range(k, j):
+            x = a + (b - a) * acc / tot
+            acc += len(toks[m]) + 1
+            times[m] = (x, a + (b - a) * acc / tot)
+        k = j
+    return times
 
 
 def chunks_of(toks, times, maxw=4, maxc=22):
@@ -69,20 +100,13 @@ def chunks_of(toks, times, maxw=4, maxc=22):
 subs = []
 lines = tl['lineas']
 for li, ln in enumerate(lines):
+    if re.fullmatch(r'[¡!¿?\s.…,]*(?:(?:ja|je|ji|jo)+[¡!¿?\s.…,]*)*', clean(ln['text']), re.I):
+        continue          # risas: sin subtítulo
     toks = clean(ln['text']).split(' ')
     nxt = lines[li + 1]['start'] if li + 1 < len(lines) else tl['t_end']
     ws = [w for w in words if ln['start'] - 0.2 <= w['start'] / 1000 <= ln['end'] + 0.1]
-    if len(ws) == len(toks):
-        times = [(w['start'] / 1000, w['end'] / 1000) for w in ws]
-        t1 = ws[-1]['end'] / 1000
-    else:   # AssemblyAI no oyó todo (suspiros, «Uf»): reparte por caracteres dentro de la línea
-        t0, t1 = ln['start'], ln['end']
-        tot = sum(len(t) + 1 for t in toks)
-        acc, times = 0, []
-        for tk in toks:
-            a = t0 + (t1 - t0) * acc / tot
-            acc += len(tk) + 1
-            times.append((a, t0 + (t1 - t0) * acc / tot))
+    times = align(toks, ws, ln['start'], ln['end'])
+    t1 = ws[-1]['end'] / 1000 if ws else ln['end']
     groups = chunks_of(toks, times)
     for gi, g in enumerate(groups):
         a = times[g[0]][0]

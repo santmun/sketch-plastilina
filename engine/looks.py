@@ -47,6 +47,8 @@ def character_lights(chars, look, eyes_local, energy_k=1.0):
         parent = ch.root.obj
         if look == 'noche':
             kc, ke, rc, re = WARM, 26.0, COLD, 120.0
+        elif look == 'atardecer':
+            kc, ke, rc, re = (1.0, 0.7, 0.46), 24.0, (1.0, 0.76, 0.5), 95.0
         else:
             kc, ke, rc, re = (1.0, 0.9, 0.8), 30.0, (1.0, 0.86, 0.7), 70.0
         if small:
@@ -85,6 +87,27 @@ def apply(SC, look, setinfo, ctx, chars, eyes_local):
             print('[skip] look', e)
         amb = add_light('n_amb', 'AREA', (0.0, 0.8, 2.6), (0, 0, 0), params.get('luz_ambiente', 32.0), (0.5, 0.62, 0.85), 4.0)
         aim(amb, (0, 0.8, 0))
+    elif look == 'atardecer':
+        w = _world(SC, params.get('mundo', '#5A4A66'), params.get('mundo_fuerza', 0.4))
+        nt = w.node_tree
+        vol = node(nt, 'ShaderNodeVolumePrincipled', {'Density': params.get('bruma', 0.006), 'Anisotropy': 0.55})
+        vol.inputs['Color'].default_value = hexc('#F4CDAE')
+        out = [n for n in nt.nodes if n.type == 'OUTPUT_WORLD'][0]
+        nt.links.new(vol.outputs['Volume'], out.inputs['Volume'])
+        ee = SC.eevee
+        for k, v in (('volumetric_tile_size', '4'), ('volumetric_samples', 64), ('volumetric_end', 9.0),
+                     ('volumetric_sample_distribution', 0.6), ('use_volumetric_shadows', True),
+                     ('bokeh_max_size', 120.0), ('bokeh_threshold', 0.6), ('bokeh_neighbor_max', 12.0)):
+            try:
+                setattr(ee, k, v)
+            except Exception as e:
+                print('[skip]', k, e)
+        try:
+            SC.view_settings.look = 'AgX - Punchy'
+        except Exception as e:
+            print('[skip] look', e)
+        amb = add_light('a_amb', 'AREA', (0.0, 0.0, 2.6), (0, 0, 0), params.get('luz_ambiente', 40.0), (0.78, 0.7, 0.98), 4.0)
+        aim(amb, (0, 0.0, 0))
     else:
         _world(SC, params.get('mundo', '#6E655C'), params.get('mundo_fuerza', 0.8))
         try:
@@ -103,5 +126,5 @@ def apply(SC, look, setinfo, ctx, chars, eyes_local):
             continue
         o.data.volume_factor = vf.get(o.name, 0.0)
         # sombras solo en las luces que esculpen (evita llenar el búfer de sombras de EEVEE)
-        if o.name.endswith('_glow') or o.name in ('n_amb', 'd_amb') or o.name.startswith('ceil_L'):
+        if o.name.endswith('_glow') or o.name in ('n_amb', 'd_amb', 'a_amb') or o.name.startswith('ceil_L'):
             o.data.use_shadow = False

@@ -63,12 +63,22 @@ Cada pista: `[tiempo, valor, (transición en s | "ease" | "lin" | "in" | "out" |
 - **brazos** (mascotas): `abajo`, `arriba`, `senala`, `senala_izq`, `jarras`, `abrazo`, `manos_juntas`, `encoge`,
   `tapa_boca`. Al hablar los brazos se mueven solos.
 - **acciones** (aditivas, con duración opcional): humanos `asiente`, `niega`, `sobresalto`, `suspiro`, `risa`,
-  `encoge`; mascotas `salta`, `asoma_ojo`, `saluda`, `tiembla`, `susurra`.
+  `encoge`; mascotas `salta`, `asoma_ojo`, `saluda`, `tiembla`, `susurra`, `risa` (rebota, se aplasta y se ladea;
+  dale la duración de su carcajada).
 - **inclinacion**, **giro**: inclinación del torso (grados adelante) y giro del cuerpo/silla (grados).
 - **oculto** / **aparece**: esconder o hacer aparecer con «pop».
 - **orientacion** (mascotas): fija su yaw en grados o `host` (mira como su anfitrión); si no, mira a su objetivo.
 - **recibo** (ChatGPT): metros desenrollados.
-- **props** del set: valor por cuadro (office_night: `puerta` grados, `cajon` metros, `pata` 0/1, `diapositiva` 0/1).
+- **inerte** (mascotas, 0..1 con transición) + **pose_inerte** `{"roll", "pitch", "yaw", "dx", "dy", "dz", "brazos"}`: el
+  juguete que se hace el muerto cuando entra un humano (estilo Toy Story). En 1 deja de respirar y parpadear y cae a su
+  pose; `yaw` fija hacia dónde queda (si no, seguiría girando hacia quien habla). Ej.:
+  `"inerte": [["inicio", 1], ["L1.end", 1], ["L1.end+0.3", 0], ["L20.end", 0], ["L20.end+0.25", 1]]`,
+  `"pose_inerte": {"roll": 80, "dz": 0.03, "yaw": 200}`. Para que uno caiga tarde (el nuevo que no sabe), retrasa su 1.
+- **ojos** (mascotas): desvía la mirada sin girar el cuerpo (−1..1, izquierda/derecha); sirve para el «de reojo» congelado.
+- **props** del set: valor por cuadro. office_night: `puerta` grados, `cajon` metros, `pata` 0/1, `diapositiva` 0/1,
+  `tecleo` (con `set_params.chat`: letras escritas del prompt; largo+1 = enviado). sala_juntas: `diapositiva` (índice),
+  `pata` 0/1, `puerta` grados (abre hacia adentro), `luces` 0..1 (techo; de noche), y con `caja_juguete`: `caja`
+  (temblor en grados), `tapa` (0 cerrada, 1 vuela, 2 desaparece) y `caja_luz` (W de la luz de adentro).
 
 ## Gestos propios sin choques
 

@@ -94,7 +94,7 @@ de 360 px.
 ```mermaid
 flowchart LR
   A[Tema] --> B[3 conceptos]
-  B -->|Santi elige| C[Guion]
+  B -->|tú eliges| C[Guion]
   C -->|aprobado| D[Retratos de look]
   D -->|aprobado| E[Voces ElevenLabs v4]
   E --> F[Tiempos AssemblyAI + RMS]
@@ -109,17 +109,19 @@ Cada flecha marcada exige aprobación. Nada se renderiza en alta sin un «sí».
 
 ```bash
 SK=~/.claude/skills/sketch-plastilina
-B=/Applications/Blender.app/Contents/MacOS/Blender
+python3 $SK/scripts/doctor.py                      # ¿tengo todo? (la primera vez)
+B="$(python3 $SK/scripts/doctor.py --blender)"
 
 python3 $SK/scripts/new_project.py mi-sketch --set cafe
-$B -b -P $SK/engine/scene.py -- --project mi-sketch --retratos --res 720
-doppler run --project editorbrain --config dev -- python3 $SK/scripts/tts.py mi-sketch
+"$B" -b -P $SK/engine/scene.py -- --project mi-sketch --retratos --res 720
+python3 $SK/scripts/tts.py mi-sketch
 python3 $SK/scripts/timeline.py mi-sketch
-doppler run --project editorbrain --config dev -- python3 $SK/scripts/transcribe.py mi-sketch
-$B -b -P $SK/engine/scene.py -- --project mi-sketch --shotstills --check --res 360 --samples 8
-$SK/engine/render.sh mi-sketch review
-VER=v1 $SK/engine/render.sh mi-sketch final
+python3 $SK/scripts/transcribe.py mi-sketch
+"$B" -b -P $SK/engine/scene.py -- --project mi-sketch --shotstills --check --res 360 --samples 8
+python3 $SK/scripts/render.py mi-sketch review
+python3 $SK/scripts/render.py mi-sketch final --ver v1
 ```
+En Windows usa `py` en lugar de `python3`.
 
 En la práctica no corres esto a mano. Le dices a Claude Code *«haz un sketch de plastilina sobre X»*
 y el skill sigue el flujo, deteniéndose en cada aprobación.
@@ -130,35 +132,60 @@ y el skill sigue el flujo, deteniéndose en cada aprobación.
 SKILL.md              instrucciones del flujo para Claude
 engine/
   scene.py            construye y renderiza un proyecto en Blender (retratos, stills, check, anim)
-  render.sh           render por tramos con guardia de disco, mezcla, subtítulos y ensamble
+  render.sh           atajo de macOS para scripts/render.py
   characters/         humanos genéricos, mascotas (Clawd, ChatGPT, Gemini, genérica) y props
   perform.py          lee blocking.json: miradas, expresiones, gestos, escondites
   cameras.py          planos desde shots.json, dúo sobre el hombro, duelo, micro push
   sets/               office_night, cafe (interfaz para agregar más)
   looks.py            luz de noche y de día
   clay.py · rig.py    materiales de plastilina y rig
-scripts/              new_project, tts, voces, timeline, transcribe, auto_shots, sfx_fetch,
-                      mix, subs, assemble, contact, recibo, pose_search
+scripts/              doctor (revisa la computadora), entorno, render, new_project, tts, voces, timeline,
+                      transcribe, auto_shots, sfx_gen, sfx_fetch, mix, subs, assemble, contact, recibo, pose_search
 templates/            plantillas de proyecto
 references/           formato, guion, casting, personajes, blocking, tomas, producción
 assets/               guion y código original de «A escondidas» como referencia
 ```
 
-## Requisitos
+## Requisitos e instalación
 
-- **Blender 5.2** (EEVEE, sin interfaz)
-- **Python 3** y **ffmpeg**
-- **ElevenLabs** (voces v4) y **AssemblyAI** (tiempos por palabra). Las llaves se leen de Doppler;
-  ningún script las imprime ni las guarda.
-- CLI de **EditorBrain** para el banco de SFX (opcional)
+Funciona en **macOS**, **Linux** y **Windows 10/11**. Necesitas:
+
+| Qué | Para qué | Cómo instalarlo |
+|---|---|---|
+| **Blender 5.x** (probado en 5.2) | el motor 3D, sin interfaz | macOS `brew install --cask blender` · Windows `winget install BlenderFoundation.Blender` · Linux `sudo snap install blender --classic` · o [blender.org](https://www.blender.org/download/) |
+| **Python 3.9+** con numpy, scipy y pillow | guion, audio, subtítulos | `python3 -m pip install --user numpy scipy pillow` |
+| **ffmpeg** (con libx264) | video y mezcla | macOS `brew install ffmpeg` · Windows `winget install Gyan.FFmpeg` · Linux `sudo apt install ffmpeg` |
+| Llave de **ElevenLabs** | las voces (gasta créditos) | [elevenlabs.io → API keys](https://elevenlabs.io/app/settings/api-keys) |
+| Llave de **AssemblyAI** | los tiempos de cada palabra (lip-sync) | [assemblyai.com → API keys](https://www.assemblyai.com/app/api-keys), tiene capa gratis |
+| ~10 GB libres y una GPU | render (1-3 h el final de 70 s) | Mac M-series o PC con tarjeta de video |
+
+Las llaves van en `~/.config/sketch-plastilina/.env`:
+```
+ELEVENLABS_API_KEY=...
+ASSEMBLYAI_API_KEY=...
+```
+(o como variables de entorno). Ningún script las imprime ni las guarda en el proyecto.
+
+Para revisar todo de una vez, y saber exactamente qué te falta y cómo instalarlo en tu sistema:
+```bash
+python3 ~/.claude/skills/sketch-plastilina/scripts/doctor.py
+python3 ~/.claude/skills/sketch-plastilina/scripts/doctor.py --en-linea --prueba   # prueba las llaves y un render real
+```
+Claude Code corre este chequeo solo la primera vez y te ayuda a instalar lo que falte.
+
+**Voces**: los IDs de las plantillas son de la cuenta de Santi (incluida su voz clonada). Con tu cuenta, elige las
+tuyas con `python3 scripts/voces.py --es` y ponlas en `cast.json`.
+
+**Efectos de sonido**: `scripts/sfx_gen.py` los genera con tu llave de ElevenLabs, o usa tus propios `.wav`.
+El banco de EditorBrain (`sfx_fetch.py`) es opcional.
 
 ## Límites conocidos
 
 - Cada set nuevo (una clínica, un aula) se programa en Python. Lo mismo una IA de marca con su logo real.
 - La postura de cada personaje, sentado o parado, es fija durante el sketch, y caminar es un ciclo simple.
-- Las líneas de diálogo no pueden encimarse.
+- Las líneas pueden encimarse con una pausa negativa (risas); los subtítulos de risas se omiten.
 - El ajuste automático de cámara solo esquiva lo que tapa el centro del encuadre.
 
 ---
 
-<div align="center"><sub>Horizontes IA · repositorio privado</sub></div>
+<div align="center"><sub>Horizontes IA</sub></div>

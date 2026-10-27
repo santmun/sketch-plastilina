@@ -5,6 +5,9 @@ va en `cast.json → personajes.<NOMBRE>.voz`. Opcional: `voz_ajustes` (voice_se
 
 ## Voces de «A escondidas»
 
+Son IDs de la cuenta de Santi: con otra cuenta pueden no existir (la de Santi es su voz clonada). Úsalas como
+guía de casting y busca equivalentes en tu cuenta o en la Voice Library de ElevenLabs.
+
 | Personaje | Voice ID | Voz | Por qué |
 |---|---|---|---|
 | Santi | `qGrxMQgsw74f3cWR4I0K` | Santiago (voz de Santi) | El protagonista es él |
@@ -20,7 +23,7 @@ Bollo (mascota pan) = `eeTcHFmLuUzCOHvnwvdr` (Angie, joven mexicana segura).
 ## Elegir voces nuevas
 
 ```bash
-doppler run --project editorbrain --config dev -- python3 $SK/scripts/voces.py --es
+python3 $SK/scripts/voces.py --es        # voces de TU cuenta de ElevenLabs
 ```
 1. Cada personaje distinto en al menos dos ejes: género, edad, timbre (grave/brillante), acento o actitud.
    En una escena con dos IAs, que se distingan con los ojos cerrados (Clawd calma vs ChatGPT argentino presumido).

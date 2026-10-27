@@ -1,11 +1,11 @@
 # voces.py — lista las voces de ElevenLabs de la cuenta (id, nombre, género, edad, acento) para elegir el casting.
-#   doppler run --project editorbrain --config dev -- python3 voces.py [--es]   (--es: solo voces en español)
+#   python3 voces.py [--es]   (--es: solo voces en español; llave: ELEVENLABS_API_KEY en el entorno o en .env)
 # Prueba una voz antes de fijarla: genera UNA línea del guion con tts.py --solo N.
 import json, os, sys, urllib.request
 
-KEY = os.environ.get('ELEVENLABS_API_KEY')
-if not KEY:
-    sys.exit('falta ELEVENLABS_API_KEY (doppler run --project editorbrain --config dev -- ...)')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import entorno
+KEY = entorno.require_key('ELEVENLABS_API_KEY')
 req = urllib.request.Request('https://api.elevenlabs.io/v2/voices?page_size=100', headers={'xi-api-key': KEY, 'User-Agent': 'Mozilla/5.0'})
 for v in json.load(urllib.request.urlopen(req, timeout=30))['voices']:
     lb = v.get('labels') or {}

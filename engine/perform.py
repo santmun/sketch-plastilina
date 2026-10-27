@@ -411,6 +411,10 @@ class Performer:
             elif a == 'risa':
                 out['lean'] = out.get('lean', 0) + 3 * abs(math.sin(x * math.pi * 8)) * env
                 out['hp'] = out.get('hp', 0) - 4 * env
+                # mascotas: rebote, aplastado y ladeo al carcajearse
+                out['dz'] = out.get('dz', 0) + 0.014 * abs(math.sin(x * math.pi * 7)) * env
+                out['squash'] = out.get('squash', 0) + 0.12 * math.sin(x * math.pi * 14) * env
+                out['roll'] = out.get('roll', 0) + 7 * math.sin(x * math.pi * 3.5) * env
             elif a == 'encoge':
                 out['side'] = out.get('side', 0)
                 out['hp'] = out.get('hp', 0) - 3 * env
@@ -504,7 +508,16 @@ class Performer:
                     mouth=dict(open=o, round=rnd, wide=max(wide, fx['wide']), smile=max(0.0, fx['smile']),
                                frown=max(0.0, -fx['smile'])),
                     arms={k: a[:3] for k, a in arms.items()}, arm_space={k: a[3] for k, a in arms.items()},
+                    items={'L': self._item(name, 'objeto_izq', t), 'R': self._item(name, 'objeto_der', t)},
                     walkphase=t * 2 * math.pi * 1.6, walkamp=walkamp)
+
+    def _item(self, name, key, t):
+        """objeto de la mano visible (1) u oculto (0); sin pista = siempre visible"""
+        keys = self.B.get(name, {}).get(key)
+        if not keys:
+            return 1.0
+        v, _ = self.step(self._cache_list(f'{name}.{key}', keys), t)
+        return float(v)
 
     def pose_mascot(self, name, ch, t):
         sp = self.prj.speech
@@ -555,11 +568,29 @@ class Performer:
             x = (t - self.T(b_ap)) / 0.25
             if 0 <= x < 1:
                 scale *= 0.2 + 0.8 * x + 0.25 * math.sin(x * math.pi)
+        blink = blink_val(self.blinks[name], t)
+        gx = self.props_val(f'{name}.ojos', t)
+        yaw = yaw + (5 * math.sin(t * 5.3) if o > 0.05 else 0)
+        pitch, roll = 0.0, act.get('roll', 0) + 8 * whisper
+        # «inerte» (juguete que se hace el muerto cuando entra un humano): 0..1 hacia pose_inerte, sin respirar ni parpadear
+        k = self.props_val(f'{name}.inerte', t)
+        if k > 1e-3:
+            pi = self.B.get(name, {}).get('pose_inerte', {})
+            pos = pos + Vector((pi.get('dx', 0.0), pi.get('dy', 0.0), pi.get('dz', 0.0))) * k
+            pitch += pi.get('pitch', 0.0) * k
+            roll += pi.get('roll', 0.0) * k
+            if 'yaw' in pi:
+                yaw += (pi['yaw'] - yaw) * k
+            sq *= 1 - k
+            blink *= 1 - k
+            pa = MASCOT_ARMS.get(pi.get('brazos', 'abajo'), MASCOT_ARMS['abajo'])
+            aL = tuple(a + (b - a) * k for a, b in zip(aL, pa[0]))
+            aR = tuple(a + (b - a) * k for a, b in zip(aR, pa[1]))
         return dict(pos=tuple(pos + Vector((0, 0, act.get('dz', 0) + 0.006 * abs(math.sin(ph)) * trot))),
-                    yaw=yaw + (5 * math.sin(t * 5.3) if o > 0.05 else 0), pitch=0, roll=act.get('roll', 0) + 8 * whisper,
+                    yaw=yaw, pitch=pitch, roll=roll,
                     tilt=-6 * o - 10 * whisper, squash=sq, bob=0.0, lean_side=act.get('lean_side', 0),
                     armL=aL, armR=aR, legphase=ph, legamp=32 * trot, tuck=tuck, eyes=eyes,
-                    blink=blink_val(self.blinks[name], t), mouth=min(1.0, o * 1.6), gaze=(0.0, gz * 0.5),
+                    blink=blink, mouth=min(1.0, o * 1.6), gaze=(gx, gz * 0.5),
                     receipt=self.props_val(f'{name}.recibo', t), hide=hid, scale=scale)
 
     def _unwrap(self, name, a):

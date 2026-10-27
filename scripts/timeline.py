@@ -8,6 +8,7 @@ P = os.path.abspath(sys.argv[1])
 SR, FPS = 48000, 24
 guion = json.load(open(os.path.join(P, 'guion.json')))
 look = json.load(open(os.path.join(P, 'look.json'))) if os.path.exists(os.path.join(P, 'look.json')) else {}
+cast = json.load(open(os.path.join(P, 'cast.json'))).get('personajes', {}) if os.path.exists(os.path.join(P, 'cast.json')) else {}
 L = os.path.join(P, 'audio', 'lineas')
 
 
@@ -42,7 +43,7 @@ def trim(x, thr_db=-45.0, pad=0.04):
 
 
 lead = float(look.get('entrada', 0.3))
-parts, lines, t = [np.zeros(int(lead * SR))], [], lead
+parts, lines, t = [], [], lead          # parts = (inicio en s, audio); una pausa negativa encima la siguiente línea
 for i, ln in enumerate(guion['lineas'], 1):
     who, text = ln[0], ln[1]
     pause = float(ln[2]) if len(ln) > 2 else 0.2
@@ -50,12 +51,20 @@ for i, ln in enumerate(guion['lineas'], 1):
     if not os.path.exists(src):
         sys.exit(f'falta {src}: corre scripts/tts.py')
     x = trim(load(src))
+    db = float((cast.get(who) or {}).get('voz_db', 0.0))      # cast.json: "voz_db": 6 sube esa voz 6 dB
+    if db:
+        x = x * 10 ** (db / 20)
     save(os.path.join(L, f'{i:02d}.wav'), x)
     d = len(x) / SR
     lines.append(dict(i=i, who=who, text=text, start=round(t, 3), end=round(t + d, 3)))
-    parts += [x, np.zeros(int(pause * SR))]
+    parts.append((t, x))
     t += d + pause
-dia = np.concatenate(parts)
+end = max(a + len(x) / SR for a, x in parts) + max(0.0, pause)
+dia = np.zeros(int(round(end * SR)) + 1)
+for a, x in parts:
+    k = int(round(a * SR))
+    dia[k:k + len(x)] += x
+dia = np.clip(dia, -1.0, 1.0)
 dur = len(dia) / SR
 save(os.path.join(P, 'audio', 'dialogo.wav'), dia)
 hop = SR // FPS

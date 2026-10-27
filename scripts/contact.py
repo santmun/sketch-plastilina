@@ -29,10 +29,9 @@ im0 = Image.open(files[0])
 ch = int(cw * im0.height / im0.width)
 rows = (len(files) + cols - 1) // cols
 sheet = Image.new('RGB', (cols * cw, rows * (ch + 18)), (20, 18, 16))
-try:
-    font = ImageFont.truetype('/System/Library/Fonts/Supplemental/Arial Bold.ttf', 13)
-except Exception:
-    font = ImageFont.load_default()
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import entorno
+font = entorno.find_font(13)
 d = ImageDraw.Draw(sheet)
 for i, f in enumerate(files):
     im = Image.open(f).convert('RGB').resize((cw, ch))

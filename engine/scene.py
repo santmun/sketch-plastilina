@@ -89,7 +89,7 @@ def occupied_seats():
     for name, spec in prj.cast.items():
         b = prj.blocking.get('personajes', {}).get(name, {})
         lug = b['lugar'][0][1] if b.get('lugar') else spec.get('lugar')
-        if lug:
+        if isinstance(lug, str):
             out.add(lug)
     return out
 
@@ -220,6 +220,8 @@ for s in SHOTS:
         v = s.get(k)
         if isinstance(v, str):
             PROBE_SPECS.add(v)
+            if '|' in v:
+                PROBE_SPECS.update(v.split('|'))   # el dúo pide a cada sujeto por separado
 
 
 def probe_now(spec):
@@ -405,7 +407,7 @@ with open(prj.path('build', 'eventos.json'), 'w') as fh:
 res = int(arg('--res', 540))
 samples = int(arg('--samples', 16))
 looks.render_settings(SC, res, samples, float(arg('--exposure', look.get('exposicion', 0.0))))
-if LUZ == 'noche':
+if LUZ in ('noche', 'atardecer'):
     try:
         SC.view_settings.look = 'AgX - Punchy'
     except Exception:

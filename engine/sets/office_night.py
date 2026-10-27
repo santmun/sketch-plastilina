@@ -47,6 +47,63 @@ def slide(parent, title=('Cómo soy', 'tan productivo'), by='por Santi', pixel_c
         o.data.align_x = 'CENTER'
 
 
+class StatesProp:
+    """prop de estados: índice del estado visible (los demás se encogen a 0)"""
+
+    def __init__(self, joints, default=0.0):
+        self.js, self.default, self.scale = joints, default, True
+
+    def apply(self, v):
+        k = int(round(v))
+        for i, j in enumerate(self.js):
+            j.scl = Vector((1, 1, 1)) * (1.0 if i == k else 1e-4)
+
+    def record(self, f):
+        for j in self.js:
+            j.record(f, scale=True)
+
+
+def chat_screen(rest, prompt, greeting='¿En qué te ayudo hoy?'):
+    """chat en el monitor: el prompt se escribe letra por letra (estados 0..N) y el estado N+1 es «enviado»
+    (burbuja del usuario arriba + «Pensando…»). Devuelve las articulaciones de cada estado."""
+    w, h = 0.235, 0.145
+    ink = emis('chat_tinta', '#2A2420', 1.0)
+    grey = emis('chat_gris', '#8C7F72', 1.0)
+    amber = emis('chat_ambar', '#D6572D', 1.0)
+    base = Joint('chat_base', rest)
+    o = [box('chat_bg', emis('slide_crema', '#F4ECDC', 1.25), (0, -0.004, 0), (w, 0.001, h), None, bevel=0)]
+    base.attach(o, 'local')
+    J = []
+
+    def state(k):
+        j = Joint(f'chat_s{k}', rest)
+        J.append(j)
+        return j
+
+    def inputbox(tag, txt, cursor):
+        objs = [box(f'{tag}_box', emis('chat_caja', '#FFFDF8', 1.35), (0, -0.0052, -0.045), (0.2, 0.0006, 0.032), None, bevel=0),
+                box(f'{tag}_borde', emis('chat_borde', '#CBBFAE', 1.0), (0, -0.0049, -0.045), (0.203, 0.0006, 0.035), None, bevel=0),
+                box(f'{tag}_send', amber, (0.175, -0.0058, -0.045), (0.014, 0.0005, 0.014), None, bevel=0)]
+        t = txt + ('|' if cursor else '')
+        if t:
+            objs.append(text(f'{tag}_t', t, ink, (-0.12, -0.0062, -0.05), 0.034, None, extrude=0.0, align='LEFT', font=FONT_TITLE))
+        return objs
+    n = len(prompt)
+    for k in range(n + 1):
+        j = state(k)
+        objs = [text(f'chat_g{k}', greeting, ink, (0, -0.006, 0.055), 0.026, None, extrude=0.0, font=FONT_TITLE)]
+        objs += inputbox(f'chat_in{k}', prompt[:k], True)
+        j.attach(objs, 'local')
+    j = state(n + 1)
+    objs = [box('chat_bubble', emis('chat_burbuja', '#E6DACA', 1.2), (0.09, -0.0052, 0.085), (0.11, 0.0006, 0.024), None, bevel=0),
+            text('chat_bubble_t', prompt, ink, (0.09, -0.0062, 0.082), 0.026, None, extrude=0.0, font=FONT_TITLE),
+            text('chat_think', 'Pensando…', grey, (-0.16, -0.0062, 0.02), 0.02, None, extrude=0.0, align='LEFT', font=FONT_TITLE),
+            box('chat_spark', amber, (-0.19, -0.0058, 0.024), (0.009, 0.0005, 0.009), None, rot=(0, D(45), 0), bevel=0)]
+    objs += inputbox('chat_inS', '', False)
+    j.attach(objs, 'local')
+    return J
+
+
 def build_office(params=None):
     params = params or {}
     R = {}
@@ -198,6 +255,14 @@ def build(ctx):
     build_coworker_desks([(n, p, 0.0, seed) for n, (p, seed) in COWORKER_SEATS.items()])
     for n, ((x, y), seed) in COWORKER_SEATS.items():
         simple_chair(f'{n}_silla', (x, y, 0), 0.0)
+    # placas de escritorio opcionales: set_params.placas = {"cubiculo_2": "DIRECTORA"}
+    for n, label in params.get('placas', {}).items():
+        (x, y), _ = COWORKER_SEATS[n]
+        c = Vector((x, y - 0.72))
+        box(f'{n}_placa', card(f'{n}_placa_m', '#2E2A26', rough=0.5), (c.x - 0.12, c.y - 0.14, DESK_Z + 0.03),
+            (0.11, 0.012, 0.03), rot=(D(-18), 0, 0), bevel=0.002)
+        text(f'{n}_placa_t', label, simple(f'{n}_placa_letras', '#E2B864', rough=0.4, metal=0.6),
+             (c.x - 0.12, c.y - 0.155, DESK_Z + 0.03), 0.024, rot=(D(72), 0, 0), font=FONT_BOLD, extrude=0.001)
     if 'principal' not in occupied:
         office_chair(Matrix.Identity(4))
     # diapositiva en el monitor principal (prop 'diapositiva' 0/1)
@@ -208,6 +273,10 @@ def build(ctx):
 
     def _scale(j, v):
         j.scl = Vector((1, 1, 1)) * max(1e-4, v)
+    chat = None
+    if params.get('chat'):          # chat en el monitor (prop 'tecleo': letras escritas; len+1 = enviado)
+        chat = chat_screen(R['scr_world'] @ Matrix.Translation((0, -0.002, 0)), params['chat'].get('prompt', ''),
+                           params['chat'].get('saludo', '¿En qué te ayudo hoy?'))
 
     def _door(j, v):
         j.rot = qe(0, 0, D(v))
@@ -216,6 +285,8 @@ def build(ctx):
         j.loc = Vector((0, v, 0))
     props = {'puerta': Prop(R['door'], _door, default=-72.0), 'cajon': Prop(R['drawer'], _drawer),
              'pata': Prop(R['paw'], _scale, scale=True), 'diapositiva': Prop(slideJ, _scale, scale=True)}
+    if chat:
+        props['tecleo'] = StatesProp(chat, 0.0)
     seats = {'principal': dict(pos=(0, 0, 0), yaw=0, chair=office_chair)}
     for n, ((x, y), seed) in COWORKER_SEATS.items():
         seats[n] = dict(pos=(x, y, 0), yaw=0, chair=None)
@@ -231,6 +302,8 @@ def build(ctx):
         'despacho': A((-1.08, 5.1, 0.0), 8), 'puerta': A((-0.85, 3.95, 0.0), 0), 'junto_principal': A((-0.38, 1.0, 0.0), 22),
         'pasillo': A((0.9, 1.6, 0.0), 160),
     }
+    for n, ((x, y), seed) in COWORKER_SEATS.items():      # mascota sobre el escritorio de cada cubículo, junto al monitor
+        anchors[f'{n}_escritorio'] = A((x + 0.32, y - 0.64, DESK_Z))
     probes = {'monitor': R['scr_world'].to_translation(), 'puerta': Vector((DOOR_X, WY, 1.1)),
               'escritorio': Vector((SANTI_DESK.x, SANTI_DESK.y, 0.9)), 'cajon': Vector((-0.38, -0.62, 0.62))}
     return dict(seats=seats, anchors=anchors, props=props, probes=probes, looks={'noche': night, 'dia': day},

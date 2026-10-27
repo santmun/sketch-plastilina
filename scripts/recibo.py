@@ -10,8 +10,10 @@ R = json.load(open(os.path.join(P, 'recibo.json')))
 W, H = 320, int(R.get('alto_px', 6400))
 im = Image.new('RGB', (W, H), (246, 243, 236))
 d = ImageDraw.Draw(im)
-mono = ImageFont.truetype('/System/Library/Fonts/Menlo.ttc', 26)
-monob = ImageFont.truetype('/System/Library/Fonts/Menlo.ttc', 34, index=1)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import entorno
+mono = entorno.find_font(26, mono=True)
+monob = entorno.find_font(34, mono=True)
 y = 60
 d.text((W // 2, y), R.get('titulo', ''), font=monob, fill=(20, 20, 20), anchor='mt'); y += 50
 for s in (R.get('subtitulo'), R.get('fecha')):

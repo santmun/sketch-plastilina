@@ -21,7 +21,7 @@ se ignoran (notas). Antes de animar, renderiza retratos y pide aprobación:
 | `cara.ojos_tam`, `ojos_color`, `cejas` (`delgadas`/`gruesas`), `cejas_color`, `boca_ancho`, `orejas`, `tam` | | ajustes finos |
 | `piel` | hex | Santi `#D4956C`; Jefe `#D29C80`. Piel con luminancia > 0.72 se quema |
 | `labios` | hex | por default, la piel oscurecida |
-| `pelo` | `{"estilo": ..., "color": ...}` | `copete` (Santi), `atras` (Jefe), `corto`, `chongo`, `coleta`, `bob`, `rizado`, `calvo`, `ninguno` |
+| `pelo` | `{"estilo": ..., "color": ...}` | `copete` (Santi), `atras` (Jefe), `corto`, `chongo`, `coleta`, `bob` (melena a la quijada con fleco de lado; deja la cara libre), `rizado`, `calvo`, `ninguno` |
 | `ropa.estilo` | `camiseta` \| `manga_larga` \| `sueter` \| `saco` \| `chef` | saco = solapas, cuello, botones; chef = filipina con doble botonadura |
 | `ropa.torso`, `piernas`, `zapatos`, `camisa`, `botones` | hex | **ropa con luminancia > 0.80 se quema a blanco** (el motor avisa) |
 | `accesorios` | lista | `gafete`, `corbata`, `delantal`, `gorro_chef`, `lentes`, `bigote`, `barba`, `lunares` |
@@ -48,6 +48,11 @@ Jefe (aprox. al de v3): `"postura": "parado", "complexion": "robusto", "cara": {
 | `clawd` | `alto` (1.225), `u` (0.026), `color` (`#D6572D`) | silueta exacta del ref, ojos con 7 expresiones, boca voxel. **22.5 % más alto que el ref** |
 | `chatgpt` | `tamano` (0.11), `recibo` (bool), `recibo_textura` (`build/recibo.png`), `recibo_largo` (1.05) | nudo negro, ojos de canica, sonrisa presumida; el recibo se desenrolla con `blocking.personajes.CHATGPT.recibo` |
 | `gemini` | `tamano` (0.11) | destello de 4 puntas con degradado azul-violeta |
+| `metaai` | `tamano` (0.1), `brillo` | anillo de Meta AI con degradado azul → violeta → rosa que flota; ojos de canica dentro del hueco |
+| `muse` | `tamano` | agente de Meta (sept. 2026) |
+| `grok` | `tamano` (0.1-0.17), `color` | esfera negra con las dos píldoras blancas del logo de Grok Bot; boca solo al hablar |
+| `deepseek` | `tamano` (0.15), `color` (`#4D6BFE`) | ballenita azul del logo de DeepSeek: panza clara, cola enroscada sobre la cabeza, aletas como brazos |
+| `nuevo` / `agi` | `tamano` (0.14), `letras` (`AGI`), `color`, `placa` | robotito de juguete genérico (sin marca): visor negro, placa en el pecho, antena |
 | `mascota` | `forma`, `tamano`, `color`, `color2`, `brillo`, `ojos` (`canica`/`pixel`), `ojos_tam`, `ojos_sep`, `boca_z`, `boca_color`, `brazos`, `patas` | genérica: `pan`, `blob`, `fantasma`, `gota`, `bot`, `caja`, `ballena`, `estrella`, `gemini` |
 
 Todas: `voz`, `escala`. Todas tienen boca que abre con su voz, parpadeo y expresiones
@@ -58,8 +63,8 @@ su propio logo, no el de otra.
 
 ## Anclajes de personaje (para `lugar`, `mira_a` y cámaras)
 
-Humanos: `hombro_izq`, `hombro_der`, `regazo`, `cara`, `boca`, `ojos`, `cabeza`, `coronilla`, `pecho`,
-`mano_izq`, `mano_der`, `pies`. Mascotas: `ojos`, `ojo_izq`, `ojo_der`, `centro`, `pies`.
+Humanos: `hombro_izq`, `hombro_der`, `hombro_izq_ext`, `hombro_der_ext` (más afuera, para que la mascota no choque
+con la cabeza al voltear), `regazo`, `cara`, `boca`, `ojos`, `cabeza`, `coronilla`, `pecho`, `mano_izq`, `mano_der`, `pies`. Mascotas: `ojos`, `ojo_izq`, `ojo_der`, `centro`, `pies`.
 Se escriben `PERSONAJE.anclaje` (`"JEFE.hombro_izq"`, `"SANTI.regazo"`, `"CLAWD.ojo_izq"`).
 
 ## Reglas de diseño

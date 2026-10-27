@@ -6,7 +6,7 @@ from clay import (D, hexc, link, empty, mat4, blob, sphere, superbox, box, cylin
                   node, FONT_BOLD, load_font)
 from rig import Joint, child_joint, qe
 
-FONT_TITLE = load_font('/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf') or FONT_BOLD
+FONT_TITLE = load_font('/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf') or FONT_BOLD     # fuera de macOS: FONT_BOLD
 
 
 def foam_wall(name, loc, size, color, rot=(0, 0, 0)):

@@ -239,6 +239,7 @@ class Human:
         # ---------------------------------------------------------- brazos
         long_sleeve = estilo in ('saco', 'chef', 'manga_larga', 'sueter')
         self.arms = {}
+        self.items = {}       # objeto en cada mano (blocking objeto_der/objeto_izq lo saca o lo guarda)
         hs = _lerp(1.0, 1.45, k) * float(S.get('manos', 1.0))
         for side, key in ((+1, 'L'), (-1, 'R')):
             a = Arm(f'{tag}_{key}', self.spine, (self.sh_x * side, 0.0, self.sh_z), l1, l2)
@@ -263,6 +264,7 @@ class Human:
             if item:
                 pj = child_joint(f'{tag}_{key}_objeto', a.wr, (0.0, -0.06 * hs, -0.07 * hs))
                 pj.attach(props.hand_item(f'{tag}_{key}_{item}', item, side), 'local')
+                self.items[key] = pj
 
     # ------------------------------------------------------------------ cabeza
     def build_head(self, skin, hair, lip, hair_hex):
@@ -438,9 +440,13 @@ class Human:
                                                            (0, H.ry * 1.3, -H.rz * 0.5)], [0.04, 0.045, 0.02], None, ring=14,
                                   per=5, disp=0.003))
         elif style == 'bob':
-            parts.append(self._cap(hair, 1.15, 1.12, 1.05, (0, 0, -0.13 * H.rz / 0.2), (0, 0, 1.0), name='hair'))
-            parts.append(superbox(f'{tag}_bangs', hair, (0, -H.ry * 0.98, H.rz * 0.62), (H.rx * 0.82, 0.025, 0.05), None, e=0.4,
-                                  disp=0.002))
+            # copa arriba (deja la frente) + melena a los lados y atrás hasta la quijada; la cara queda libre
+            parts.append(self._cap(hair, 1.1, 1.08, 1.05, (0, -0.15, hl - 0.02), (0, 0.7, 1.0), name='hair'))
+            parts.append(self._cap(hair, 1.17, 1.12, 1.03, (0, -0.075, 0), (0, 1.0, 0.15), name='hair_side'))
+            # fleco de lado (barrido de una sien a la otra), no una banda recta
+            pts = [H.surf(0.9, 0.78, 0.016), H.surf(0.45, 0.72, 0.022), H.surf(-0.05, 0.66, 0.024), H.surf(-0.55, 0.6, 0.02),
+                   H.surf(-0.95, 0.52, 0.014)]
+            parts.append(tube(f'{tag}_bangs', hair, pts, [0.016, 0.028, 0.03, 0.026, 0.014], None, ring=12, per=6, disp=0.002))
         elif style == 'rizado':
             rnd = random.Random(len(self.name) * 31 + 7)
             for i in range(30):
@@ -476,6 +482,8 @@ class Human:
         sx, sz = self.shoulder_top
         if name in ('hombro_izq', 'hombro_der'):
             return self.spine, Vector(((sx if name == 'hombro_izq' else -sx), -0.01, sz))
+        if name in ('hombro_izq_ext', 'hombro_der_ext'):      # orilla del hombro: mascotas anchas no tocan la cabeza
+            return self.spine, Vector(((sx + 0.075) * (1 if name == 'hombro_izq_ext' else -1), -0.02, sz - 0.015))
         if name == 'regazo':
             return self.body, Vector((0, -0.275, 0.585)) if self.sit else Vector((0, -0.25, self.hip_h + 0.1))
         if name in ('cara', 'boca'):
@@ -535,6 +543,8 @@ class Human:
             op = self._mouth.get('open', 0.0)
             self.stache.loc = Vector((0, 0, 0.006 * op))
             self.stache.rot = qe(D(-6 * op))
+        for key, pj in self.items.items():
+            pj.scl = Vector((1, 1, 1)) * (1.0 if p.get('items', {}).get(key, 1.0) > 0.5 else TINY)
         spW = self.spine.local()
         for key, a in self.arms.items():
             tgt, pole, wr = p['arms'][key]
@@ -565,6 +575,8 @@ class Human:
             a.sh.record(f, scale=False)
             a.el.record(f, scale=False)
             a.wr.record(f, scale=False)
+        for pj in self.items.values():
+            pj.record(f)
 
     def mesh_prefix(self):
         return f'{self.tag}_'
