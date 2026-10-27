@@ -17,7 +17,7 @@ COWORKER_SEATS = {'cubiculo_1': ((-1.85, 0.25), 1), 'cubiculo_2': ((1.95, 0.35),
                   'cubiculo_4': ((1.9, 2.25), 4)}
 
 
-def slide(parent, title=('Cómo soy', 'tan productivo'), by='por Santi', pixel_clawd=True):
+def slide(parent, title=('Mi', 'presentación'), by='', pixel_clawd=True):
     """diapositiva con título de 2 renglones y la cara pixel de Clawd (va delante de la pantalla principal)"""
     w, h = 0.235, 0.145
     box('slide_bg', emis('slide_crema', '#F4ECDC', 1.25), (0, -0.004, 0), (w, 0.001, h), parent, bevel=0)
@@ -183,7 +183,7 @@ def build_office(params=None):
     superbox('cabinet', clay('archivero', '#8E8B80', rough=0.5), (-2.9, 1.0, 0.5), (0.22, 0.3, 0.5), e=0.2, disp=0.001)
     for i in range(3):
         box(f'cab_handle{i}', clay('jaladera', '#3A3633'), (-2.67, 1.0, 0.25 + 0.3 * i), (0.01, 0.06, 0.012), bevel=0.003)
-    # ---- escritorio de Santi
+    # ---- escritorio principal
     c = SANTI_DESK
     desk('sdesk', c, w=0.72, d=0.36, legs=True)
     foam_wall('cub_main', (c.x + 0.83, c.y + 0.3, 0.62), (0.62, 0.02, 0.62), '#A7A08D', rot=(0, 0, D(90)))
@@ -211,7 +211,7 @@ def build_office(params=None):
     # cajón (Clawd se esconde aquí cuando entra el jefe); se anima en Y desde scene.py
     wood = card('escritorio', '#B98B5E', rough=0.6)
     dr = Joint('drawer', Matrix.Identity(4))
-    dx, dy0 = -0.38, c.y + 0.36            # frente del cajón al ras del borde del escritorio (lado de Santi)
+    dx, dy0 = -0.38, c.y + 0.36            # frente del cajón al ras del borde del escritorio (lado del asiento principal)
     parts = [box('drawer_front', wood, (dx, dy0 + 0.005, 0.615), (0.215, 0.01, 0.088), bevel=0.003),
              box('drawer_bottom', wood, (dx, dy0 - 0.17, 0.532), (0.2, 0.17, 0.006), bevel=0.002),
              box('drawer_back', wood, (dx, dy0 - 0.335, 0.6), (0.2, 0.006, 0.07), bevel=0.002),
@@ -268,7 +268,7 @@ def build(ctx):
     # diapositiva en el monitor principal (prop 'diapositiva' 0/1)
     slideJ = Joint('slideJ', R['scr_world'])
     before = set(bpy.data.objects)
-    slide(None, tuple(params.get('diapositiva', ['Cómo soy', 'tan productivo'])), params.get('diapositiva_por', 'por Santi'))
+    slide(None, tuple(params.get('diapositiva', ['Mi', 'presentación'])), params.get('diapositiva_por', ''))
     slideJ.attach([o for o in bpy.data.objects if o not in before], 'local')
 
     def _scale(j, v):

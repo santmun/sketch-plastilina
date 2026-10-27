@@ -3,32 +3,26 @@
 Modelo: `eleven_v4` (también hay `eleven_v4_turbo`; `eleven_v3` queda de respaldo). La voz de cada personaje
 va en `cast.json → personajes.<NOMBRE>.voz`. Opcional: `voz_ajustes` (voice_settings de la API) por personaje.
 
-## Voces de «A escondidas»
+## Dónde salen las voces
 
-Son IDs de la cuenta de Santi: con otra cuenta pueden no existir (la de Santi es su voz clonada). Úsalas como
-guía de casting y busca equivalentes en tu cuenta o en la Voice Library de ElevenLabs.
+- **API de ElevenLabs** (`tts.py`): IDs de voz de la cuenta del usuario. `python3 $SK/scripts/voces.py --es` las lista.
+- **MCP de ElevenLabs**: usa sus herramientas para listar voces y generar cada toma; `tts.py --plan` dice qué archivo,
+  texto y voz necesita cada línea y `tts.py --registrar` las da por buenas.
+- **Voces grabadas**: el usuario actúa sus personajes y guarda cada toma con el nombre que pide `tts.py --plan`.
+- **Su propia voz clonada**: solo si el usuario la tiene y quiere usarla. Nunca clones la voz de otra persona sin permiso.
 
-| Personaje | Voice ID | Voz | Por qué |
-|---|---|---|---|
-| Santi | `qGrxMQgsw74f3cWR4I0K` | Santiago (voz de Santi) | El protagonista es él |
-| Clawd | `9EU0h6CVtEDS6vriwwq5` | Verónica (en la cuenta aparece como «Julieta - Young, Gentle & Calm») | Calma suave: el deadpan de la IA |
-| Jefe | `OLmSqlYzB06EIKJRy5b0` | Murdock, grave y autoritaria | Imponente; contraste con la voz de Santi |
-| ChatGPT | `jbWMqMKDKL7X0v1DXTHH` | Franco, argentino seguro | Presumido; el acento lo separa de Clawd al instante |
-| Gemini | `qWWAqFomnJ99VwQLREfT` | Kate, brillante y juguetona | Cómplice y traviesa |
-| Mariana | `p18tR9wFA5Ng9WhfWI0o` | Isabella, narración casual | Seca y tierna para el remate |
-
-Probadas en el ejercicio de validación (café): Chef = `Rt1JHkPO27QCUX6Nd5bV` (Jorge, rasposa, mayor);
-Bollo (mascota pan) = `eeTcHFmLuUzCOHvnwvdr` (Angie, joven mexicana segura).
+Los IDs de voz son de cada cuenta: no copies IDs de ejemplos o proyectos de otra persona.
 
 ## Elegir voces nuevas
 
 ```bash
-python3 $SK/scripts/voces.py --es        # voces de TU cuenta de ElevenLabs
+python3 $SK/scripts/voces.py --es        # voces de TU cuenta de ElevenLabs (o las del MCP)
 ```
 1. Cada personaje distinto en al menos dos ejes: género, edad, timbre (grave/brillante), acento o actitud.
-   En una escena con dos IAs, que se distingan con los ojos cerrados (Clawd calma vs ChatGPT argentino presumido).
+   En una escena con dos IAs, que se distingan con los ojos cerrados (una calmada y una presumida con otro acento).
 2. Las IAs suenan más tranquilas que los humanos: el contraste de energía es el chiste.
 3. Personajes de fondo con una sola línea: voz con mucho carácter (seca, rasposa, juguetona).
-4. Evita reutilizar la voz de Santi para otro personaje y no clones voces de personas reales sin permiso.
+4. No reutilices la voz del protagonista para otro personaje.
 5. Prueba antes de fijar: genera solo una línea (`tts.py <dir> --solo 4`) y escúchala con su etiqueta.
-6. Variedad: no todo el elenco latino de la misma edad y acento; mezcla (Santi pide diversidad en personajes).
+6. Variedad: no todo el elenco de la misma edad, género y acento.
+7. Si una voz queda más baja que el resto, súbela con `"voz_db": 6` en su personaje (`cast.json`).

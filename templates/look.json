@@ -1,10 +1,17 @@
 {
- "_nota": "set: office_night | cafe (o uno nuevo en engine/sets). luz: noche (look aprobado) | dia. Ver references/tomas.md y produccion.md",
+ "_nota": "set: office_night | sala_juntas | cafe (o uno nuevo en engine/sets). luz: noche | dia | atardecer. El look de plastilina es el default; si el usuario quiere otro estilo, ajusta colores, luz y materiales. Ver references/tomas.md y produccion.md",
  "set": "office_night",
  "luz": "noche",
  "dof": 0.6,
  "exposicion": 0.0,
  "entrada": 0.3,
  "cola": 0.8,
- "set_params": {"diapositiva": ["Cómo soy", "tan productivo"], "diapositiva_por": "por Santi", "taza": "LUN"}
+ "set_params": {
+  "diapositiva": [
+   "Mi",
+   "presentación"
+  ],
+  "diapositiva_por": "",
+  "taza": ""
+ }
 }

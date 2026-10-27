@@ -120,7 +120,7 @@ def monitor(name, loc, rot_z, seed=1, screen_fn=None):
 
 
 def office_chair(W, color='#2F2D2B'):
-    """silla de oficina construida en coordenadas de mundo con la matriz W (para pegarla a Santi)"""
+    """silla de oficina construida en coordenadas de mundo con la matriz W (para pegarla al asiento principal)"""
     m = clay(f'silla_{color}', color, rough=0.55)
     objs = [superbox('chair_seat', m, (0, -0.02, 0.43), (0.21, 0.2, 0.04), None, disp=0.002),
             superbox('chair_back', m, (0, 0.2, 0.75), (0.19, 0.04, 0.24), None, rot=(D(-8), 0, 0), disp=0.002),

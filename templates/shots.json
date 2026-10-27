@@ -15,12 +15,12 @@
   "lens": 26,
   "f": 4.0,
   "push": 0.88,
-  "focus": "SANTI",
+  "focus": "PROTA",
   "sub": "top"
  },
  {
   "n": "S02 bajo el escritorio",
-  "t": "L1:jefe",
+  "t": "L1+0.6",
   "tgt": [
    0.0,
    -0.3,
@@ -33,7 +33,7 @@
   ],
   "lens": 24,
   "f": 2.8,
-  "focus": "CLAWD",
+  "focus": "MASCOTA",
   "drift": [
    0,
    0.05,
@@ -42,20 +42,20 @@
   "sub": "top"
  },
  {
-  "n": "S03 Santi close",
+  "n": "S03 Prota close",
   "t": "L2-0.1",
-  "tgt": "SANTI.cara",
+  "tgt": "PROTA.cara",
   "plano": "close",
   "angulo": 8,
   "push": 0.94,
   "f": 2.2,
-  "focus": "SANTI",
+  "focus": "PROTA",
   "sub": "low"
  },
  {
-  "n": "S04 Clawd close",
+  "n": "S04 Mascota close",
   "t": "L4-0.1",
-  "tgt": "CLAWD",
+  "tgt": "MASCOTA",
   "plano": "close",
   "angulo": -15,
   "push": 0.92,

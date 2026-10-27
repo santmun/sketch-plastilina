@@ -67,7 +67,7 @@ env = np.clip(tt / 0.6, 0, 1) * np.clip((prj.t_end - tt) / 1.0, 0, 1)
 mix += room * env
 
 
-# ---- SFX sintetizados (los que no existen en editorbrain-essentials-v1). Sin silbidos ni twang de western: Santi los vetó.
+# ---- SFX sintetizados (los que no existen en editorbrain-essentials-v1). Sin silbidos ni twang de western: no funcionaron en las pruebas.
 def synth(kind, dur=None):
     if kind == 'puerta':
         n = int(0.7 * SR); t = np.arange(n) / SR

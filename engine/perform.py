@@ -31,7 +31,7 @@ FACE_KEYS = ('lidU', 'lidL', 'brow', 'browL', 'worry', 'angry', 'smile', 'wide',
 FACE_DEF = dict(lidU=32, lidL=28, brow=0.0, browL=0.0, worry=0.0, angry=0.0, smile=0.0, wide=0.0, sweat=0.0)
 
 # ------------------------------------------------------------------ gestos de brazos (humanos)
-# (objetivo muñeca, polo del codo, muñeca euler grados, espacio, tipo) — calibrados en Santi (hombro x 0.15, z 0.36)
+# (objetivo muñeca, polo del codo, muñeca euler grados, espacio, tipo) — calibrados en el humano delgado de referencia (hombro x 0.15, z 0.36)
 # tipo: 'cabeza' = toca la cabeza (se pasa por un punto «fuera» para no atravesarla); 'hombro' / 'centro' = escalado por complexión
 A = {
     'lapL': ((0.15, -0.30, 0.61), (0.6, 1.0, -0.3), (0, 0, 80), 'root', 'centro'),
@@ -330,7 +330,7 @@ class Performer:
             tgt[0] += math.copysign((ch.sh_x - 0.15) * 0.8, tgt[0])
             if space == 'spine':
                 tgt[2] += (ch.sh_z - 0.36) * 0.6
-        elif kind == 'cabeza':     # relativo a la cabeza real (Santi: cuello a 0.43, cabeza rx 0.156)
+        elif kind == 'cabeza':     # relativo a la cabeza real (referencia: cuello a 0.43, cabeza rx 0.156)
             tgt[2] += ch.neck_z - 0.43
             tgt[0] *= ch.H.rx / 0.156
         if not ch.sit and space == 'root':

@@ -45,11 +45,11 @@ python3 $SK/scripts/render.py <dir> final --ver v1   # 1080x1920, 40 muestras ->
   `audio/sfx/`, o el banco de EditorBrain (`editorbrain sfx search … --query`, `sfx_fetch.py <id> <nombre> <dir>`,
   verifica SHA-256 y no guarda URLs firmadas). Sintetizados: `synth:puerta`, `impresora`, `caja_registradora`, `papel`, `golpe`, `ding`, `cajon`.
   `corta_en` deja silencio limpio antes de un susurro o remate. `build/eventos.json` lista saltos y apariciones
-  para colocar pops y whooshes. **Sin silbido ni twang de western en el duelo** (no funcionó en «A escondidas»).
+  para colocar pops y whooshes. **Sin silbido ni twang de western en el duelo** (no funcionó en las pruebas).
 
 ## Sets y sus parámetros (`look.json → set_params`)
 
-- **office_night** (la oficina de «A escondidas»): `diapositiva` (2 renglones), `diapositiva_por`, `taza`,
+- **office_night** (oficina de noche con cubículos): `diapositiva` (2 renglones), `diapositiva_por`, `taza`,
   `placas` (`{"cubiculo_2": "DIRECTORA"}`: placa en el escritorio), `chat` (`{"prompt": "hazla bien", "saludo": "…"}`:
   un chat en el monitor que se escribe letra por letra con el prop `tecleo`). Anclajes extra: `cubiculo_N_escritorio`
   (mascota sobre el escritorio de cada cubículo).
@@ -74,6 +74,22 @@ python3 $SK/scripts/render.py <dir> final --ver v1   # 1080x1920, 40 muestras ->
 - **Suspenso**: silencio de 3 s después de la línea, prop que tiembla/brilla (`caja`, `caja_luz`), todos con
   `mira_a` al objeto y ojos `wide`, cámara con `push` 0.8 y `dutch`, SFX de anticipación y un impacto al revelar.
 
+## Render en una granja (Cycles)
+
+Algunas granjas solo aceptan Cycles, un `.blend` autocontenido y una sola cámara (sin marcadores de cámara,
+compositor ni secuenciador). El motor lo exporta así:
+```bash
+$B -b -P $SK/engine/scene.py -- --project <dir> --motor-cycles --samples 48 --res 1080 --save --granja \
+   --granja-cuadros <cuadros> --save-path build/cycles.blend
+```
+- `--motor-cycles`: Cycles con denoise y GPU si hay; quita la bruma volumétrica (en Cycles es carísima; `--bruma` la deja).
+- `--granja`: hornea todos los planos en una sola cámara, cuadro por cuadro; apaga compositor y secuenciador.
+- `--save`: empaqueta fuentes e imágenes dentro del `.blend`.
+- `--granja-cuadros`: si la granja pide una duración entera en segundos, redondea (los cuadros de más mantienen la pose).
+Compara antes un par de cuadros en Cycles contra la revisión en EEVEE (el look cambia un poco) y renderiza un cuadro
+del `.blend` solo, sin el motor, para comprobar que es autocontenido. El audio y los subtítulos se ponen después
+(`assemble.py` o `unir.py`).
+
 ## Revisión (antes de mandar cualquier cosa al usuario)
 
 1. `scene.py --check` en 0 problemas (o justificados: el gafete rozando a la mascota al aterrizar, vidrio a propósito).
@@ -81,7 +97,7 @@ python3 $SK/scripts/render.py <dir> final --ver v1   # 1080x1920, 40 muestras ->
    un plano distinto en cada corte, subtítulos dentro de cuadro y sin cruzar cortes, nada quemado a blanco.
 3. Escucha la mezcla completa una vez (picos de SFX, silencios intencionales).
 
-## Lecciones de «A escondidas» (convertidas en reglas del motor)
+## Lecciones de producción (convertidas en reglas del motor)
 
 | Lección | Dónde quedó |
 |---|---|

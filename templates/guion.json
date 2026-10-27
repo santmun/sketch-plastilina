@@ -1,10 +1,27 @@
 {
- "_nota": "lineas: [PERSONAJE, texto con etiquetas v4 en inglés entre corchetes, pausa en s después de la línea]. Los nombres deben existir en cast.json. Ver references/guion.md",
+ "_nota": "lineas: [PERSONAJE, texto con etiquetas v4 en inglés entre corchetes, pausa en s después de la línea]. Pausa negativa = la siguiente línea se encima (risas). Los nombres deben existir en cast.json. Reemplaza estas líneas de ejemplo con el guion aprobado (references/guion.md).",
  "modelo": "eleven_v4",
+ "idioma": "es",
  "lineas": [
-  ["SANTI", "[whispers] [nervous] Claude... ¿mi jefe sabe que tú haces mi trabajo?", 0.24],
-  ["CLAWD", "[whispers] [calm] No.", 0.17],
-  ["SANTI", "[relieved sigh] Uf.", 0.21],
-  ["CLAWD", "[whispers] Cree que eres muy bueno.", 0.3]
+  [
+   "PROTA",
+   "[whispers] [nervous] (el gancho: un secreto o una pregunta sobre el tema)",
+   0.24
+  ],
+  [
+   "MASCOTA",
+   "[calm] (respuesta corta que empeora todo)",
+   0.2
+  ],
+  [
+   "PROTA",
+   "[relieved sigh] (reacción)",
+   0.21
+  ],
+  [
+   "MASCOTA",
+   "[whispers] (la revelación que sube la apuesta)",
+   0.3
+  ]
  ]
 }

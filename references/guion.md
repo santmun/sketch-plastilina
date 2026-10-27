@@ -5,7 +5,7 @@
 {
  "modelo": "eleven_v4",
  "lineas": [
-  ["SANTI", "[whispers] [nervous] Claude... ¿mi jefe sabe que tú haces mi trabajo?", 0.24],
+  ["PROTA", "[whispers] [nervous] Oye... ¿mi jefe sabe que tú haces mi trabajo?", 0.24],
   ["CLAWD", "[whispers] [calm] No.", 0.17]
  ]
 }
@@ -16,7 +16,7 @@ cola final (`cola`, 0.8 s). Nunca hay dos líneas encimadas (el lip-sync usa una
 
 ## Etiquetas de audio (ElevenLabs v4)
 
-En inglés, entre corchetes, al inicio de la línea (se pueden encadenar dos). Las usadas en «A escondidas»:
+En inglés, entre corchetes, al inicio de la línea (se pueden encadenar dos). Las que más se han usado:
 `[whispers]` `[nervous]` `[calm]` `[relieved sigh]` `[pleasantly surprised]` `[shocked]` `[matter-of-fact]`
 `[panicked whisper]` `[suspicious]` `[softly]` `[sad]` `[gently]` `[tender]` `[quietly]` `[nervous smile]`
 `[smug]` `[offended]` `[hurt]` `[slowly]` `[guilty]` `[deadpan]` `[playful]` `[cheerful]`.

@@ -62,7 +62,7 @@ def warn_colors():
             lim = 0.72 if k == 'piel' else 0.80
             if luminance(v) > lim and not k.endswith(('camisa', 'zapatos')):
                 print(f'[aviso] {n}.{k} = {v} (luminancia {luminance(v):.2f} > {lim}): se va a quemar a blanco con la luz; '
-                      f'oscurécelo (la camiseta crema de Santi se bajó de #EFE4CF a #D6C7A8)')
+                      f'oscurécelo (p. ej. una camiseta crema #EFE4CF se ve bien en #D6C7A8)')
 
 
 def build_chars(seats):
@@ -412,9 +412,102 @@ if LUZ in ('noche', 'atardecer'):
         SC.view_settings.look = 'AgX - Punchy'
     except Exception:
         pass
+if arg('--motor-cycles'):
+    # render en Cycles (para EditorBrain Render u otra granja): mismas cámaras, luces y animación horneada
+    SC.render.engine = 'CYCLES'
+    cy = SC.cycles
+    cy.samples = int(arg('--samples', 64))
+    cy.use_adaptive_sampling = True
+    cy.adaptive_threshold = 0.02
+    cy.use_denoising = True
+    cy.max_bounces, cy.diffuse_bounces, cy.glossy_bounces, cy.transmission_bounces = 6, 3, 3, 6
+    cy.volume_bounces = 0
+    cy.volume_step_rate = 4.0
+    cy.seed = 7
+    cy.use_animated_seed = False
+    try:
+        cy.device = 'GPU'
+        prefs = bpy.context.preferences.addons['cycles'].preferences
+        for kind in ('OPTIX', 'METAL', 'CUDA', 'HIP', 'ONEAPI'):
+            try:
+                prefs.compute_device_type = kind
+                prefs.get_devices()
+                if any(d.type == kind for d in prefs.devices):
+                    for d in prefs.devices:
+                        d.use = d.type == kind
+                    break
+            except Exception:
+                continue
+    except Exception as e:
+        print('[cycles] sin GPU:', e)
+    if not arg('--bruma'):
+        # la bruma volumétrica del mundo es carísima en Cycles: se quita (el look de noche queda por las luces)
+        w = SC.world
+        if w and w.use_nodes:
+            for ln in list(w.node_tree.links):
+                if ln.to_socket.name == 'Volume':
+                    w.node_tree.links.remove(ln)
+    SC.frame_start, SC.frame_end = 0, prj.n_frames - 1
+    SC.render.fps = FPS
+    print(f'[cycles] {cy.samples} muestras, cuadros 0-{prj.n_frames - 1}', flush=True)
+def bake_single_camera(n_frames):
+    """granjas que no aceptan cambio de cámara por marcadores: una sola cámara con cada plano horneado cuadro por cuadro
+    (posición, rotación, lente, foco), sin compositor ni secuenciador"""
+    marks = sorted(((m.frame, m.camera) for m in SC.timeline_markers if m.camera), key=lambda x: x[0])
+    cd = bpy.data.cameras.new('CAM_FINAL')
+    cam = bpy.data.objects.new('CAM_FINAL', cd)
+    SC.collection.objects.link(cam)
+    cam.rotation_mode = 'QUATERNION'
+    for f in range(0, n_frames):
+        src = marks[0][1]
+        for fr, c in marks:
+            if fr <= f:
+                src = c
+        SC.frame_set(f)
+        loc, rot, _ = src.matrix_world.decompose()
+        cam.location, cam.rotation_quaternion = loc, rot
+        cam.keyframe_insert('location', frame=f)
+        cam.keyframe_insert('rotation_quaternion', frame=f)
+        sd = src.data
+        for k in ('lens', 'sensor_width', 'sensor_height', 'shift_x', 'shift_y', 'clip_start', 'clip_end'):
+            setattr(cd, k, getattr(sd, k))
+        cd.sensor_fit = sd.sensor_fit
+        cd.dof.use_dof = sd.dof.use_dof
+        cd.dof.focus_distance = sd.dof.focus_distance
+        cd.dof.aperture_fstop = sd.dof.aperture_fstop
+        for k in ('lens', 'shift_x', 'shift_y', 'clip_start'):
+            cd.keyframe_insert(k, frame=f)
+        cd.dof.keyframe_insert('focus_distance', frame=f)
+        cd.dof.keyframe_insert('aperture_fstop', frame=f)
+    for fc in list(cam.animation_data.action.fcurves if cam.animation_data and hasattr(cam.animation_data.action, 'fcurves') else []):
+        for kp in fc.keyframe_points:
+            kp.interpolation = 'CONSTANT'
+    SC.timeline_markers.clear()
+    SC.camera = cam
+    for o in [o for o in bpy.data.objects if o.type == 'CAMERA' and o is not cam]:
+        for ch in list(o.children):
+            bpy.data.objects.remove(ch, do_unlink=True)
+        bpy.data.objects.remove(o, do_unlink=True)
+    try:
+        SC.use_nodes = False
+    except Exception:
+        pass
+    SC.render.use_compositing = False
+    SC.render.use_sequencer = False
+    print(f'[granja] una cámara, {len(marks)} planos horneados en {n_frames} cuadros', flush=True)
+
+
 if arg('--save'):
-    bpy.ops.wm.save_as_mainfile(filepath=prj.path('build', 'scene.blend'))
-    print('[save] build/scene.blend')
+    if arg('--granja'):
+        bake_single_camera(int(arg('--granja-cuadros', prj.n_frames)) if arg('--granja-cuadros') else prj.n_frames)
+    out_blend = prj.path(str(arg('--save-path', 'build/scene.blend'))) if arg('--save-path') else prj.path('build', 'scene.blend')
+    SC.frame_start, SC.frame_end = 0, prj.n_frames - 1
+    try:
+        bpy.ops.file.pack_all()        # fuentes e imágenes dentro del .blend (una granja no tiene las rutas de esta Mac)
+    except Exception as e:
+        print('[save] no pude empaquetar:', e)
+    bpy.ops.wm.save_as_mainfile(filepath=out_blend, compress=True)
+    print(f'[save] {out_blend}')
 
 
 def render_still(f, path):

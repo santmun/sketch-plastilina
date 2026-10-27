@@ -1,4 +1,12 @@
 [
- {"_nota": "t = referencia de tiempo del guion; sfx = nombre en audio/sfx/ (banco EditorBrain, bajar con sfx_fetch.py) o synth:puerta|impresora|caja_registradora|papel|golpe|ding|cajon. corta_en = silencio limpio antes de un remate."},
- {"t": "L1-0.25", "sfx": "pop1", "gain_db": -10, "rate": 1.0, "uso": "Clawd se asoma"}
+ {
+  "_nota": "t = referencia de tiempo del guion; sfx = nombre de audio/sfx/<nombre>.wav (generado con sfx_gen.py, propio o de un banco) o synth:puerta|impresora|caja_registradora|papel|golpe|ding|cajon. corta_en = silencio limpio antes de un remate."
+ },
+ {
+  "t": "L1-0.25",
+  "sfx": "synth:ding",
+  "gain_db": -14,
+  "rate": 1.0,
+  "uso": "la mascota se asoma"
+ }
 ]

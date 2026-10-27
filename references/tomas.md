@@ -2,7 +2,7 @@
 
 Lista de planos; cada uno dura hasta que empieza el siguiente (corte seco). Al construir, `scene.py` escribe
 `build/shots_resolved.json` (`n`, `t`, `end`, `sub`, `lens`), que usan subtítulos y mezcla (mismo esquema que el
-`shots.json` de «A escondidas»).
+formato de `shots.json`).
 
 ## Esquema
 

@@ -113,9 +113,9 @@ def slides(parent, params):
         J.append((j, before))
     built = []
     # 0: portada
-    objs = [title('s0_t1', params.get('titulo1', 'Cómo soy'), 0.17, 0.15, ink, None),
-            title('s0_t2', params.get('titulo2', 'tan productivo'), -0.02, 0.15, ink, None),
-            title('s0_by', params.get('por', 'por Santi'), -0.27, 0.07, grey, None)]
+    objs = [title('s0_t1', params.get('titulo1', 'Mi'), 0.17, 0.15, ink, None),
+            title('s0_t2', params.get('titulo2', 'presentación'), -0.02, 0.15, ink, None),
+            title('s0_by', params.get('por', ''), -0.27, 0.07, grey, None)]
     built.append(objs)
     # 1: MI MÉTODO + cara de Clawd grande
     o = [title('s1_t', params.get('s1_titulo', 'MI MÉTODO'), 0.36, 0.13, ink, None)]
@@ -132,7 +132,7 @@ def slides(parent, params):
         pixel_clawd(f's2_{i}', None, -0.76 + 0.38 * i, -0.1, 0.021, amber, ink, -0.011)
     o += [x for x in bpy.data.objects if x not in b]
     built.append(o)
-    # 3: la de Santi
+    # 3: cierre
     built.append([title('s3_t', '¡Gracias!', 0.06, 0.2, ink, None), title('s3_q', '¿Preguntas?', -0.2, 0.08, grey, None)])
     # 4: el correo ya se mandó
     o = [title('s4_t', 'Resumen de la junta', 0.3, 0.1, ink, None)]
@@ -486,7 +486,7 @@ def sunset(SC, ctx):
 
 def night(SC, ctx):
     """sala de noche: techo apagado (prop 'luces'), proyector apagado, luna fría por los ventanales,
-    pasillo cálido detrás de la puerta (Santi entra a contraluz)"""
+    pasillo cálido detrás de la puerta (quien entra llega a contraluz)"""
     lk = ctx.get('look', {})
     for i, (pos, tgt) in enumerate((((RW - 0.2, 0.0, 1.6), (0, 0, 0.6)), ((0.0, BACK + 0.2, 1.6), (0, 0, 0.6)))):
         L = add_light(f'luna_win{i}', 'AREA', pos, (0, 0, 0), float(lk.get('ventana', 70.0)), (0.55, 0.68, 1.0), 2.4)

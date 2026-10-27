@@ -14,32 +14,46 @@ se ignoran (notas). Antes de animar, renderiza retratos y pide aprobación:
 | `voz` | voice ID | ver casting.md |
 | `postura` | `sentado` \| `parado` | sentado: piernas fijas y silla del asiento (gira con él). Parado: camina entre anclajes |
 | `lugar` | asiento o anclaje del set | lugar inicial si `blocking.json` no trae `lugar` |
-| `escala` | 1.0 | tamaño uniforme (Santi = 1.0) |
-| `complexion` | `delgado` \| `medio` \| `robusto` \| 0-1 | delgado = Santi; robusto = el Jefe (hombros anchos, pecho de barril, manos grandes) |
-| `cara.preset` | `A` \| `B` \| `C` \| `cuadrada` \| `redonda` | **A = la aprobada** (facetas grandes); cuadrada = Jefe; redonda = óvalo amable; C = lisa |
+| `escala` | 1.0 | tamaño uniforme |
+| `complexion` | `delgado` \| `medio` \| `robusto` \| 0-1 | robusto = hombros anchos, pecho de barril, manos grandes |
+| `cara.preset` | `A` \| `B` \| `C` \| `cuadrada` \| `redonda` | A = facetas grandes (la de default); cuadrada = mandíbula ancha; redonda = óvalo amable; C = lisa |
 | `cara.nariz` | factor | A usa 0.88 por default (la nariz −12 % aprobada) |
 | `cara.ojos_tam`, `ojos_color`, `cejas` (`delgadas`/`gruesas`), `cejas_color`, `boca_ancho`, `orejas`, `tam` | | ajustes finos |
-| `piel` | hex | Santi `#D4956C`; Jefe `#D29C80`. Piel con luminancia > 0.72 se quema |
+| `piel` | hex | p. ej. `#D4956C`, `#C98E6A`, `#8D5A3B`. Piel con luminancia > 0.72 se quema |
 | `labios` | hex | por default, la piel oscurecida |
-| `pelo` | `{"estilo": ..., "color": ...}` | `copete` (Santi), `atras` (Jefe), `corto`, `chongo`, `coleta`, `bob` (melena a la quijada con fleco de lado; deja la cara libre), `rizado`, `calvo`, `ninguno` |
+| `pelo` | `{"estilo": ..., "color": ...}` | `copete`, `atras` (peinado hacia atrás), `corto`, `chongo`, `coleta`, `bob` (melena a la quijada con fleco de lado; deja la cara libre), `rizado`, `calvo`, `ninguno` |
 | `ropa.estilo` | `camiseta` \| `manga_larga` \| `sueter` \| `saco` \| `chef` | saco = solapas, cuello, botones; chef = filipina con doble botonadura |
 | `ropa.torso`, `piernas`, `zapatos`, `camisa`, `botones` | hex | **ropa con luminancia > 0.80 se quema a blanco** (el motor avisa) |
 | `accesorios` | lista | `gafete`, `corbata`, `delantal`, `gorro_chef`, `lentes`, `bigote`, `barba`, `lunares` |
 | `corbata_color`, `gafete_color`, `delantal_color`, `gorro_color`, `lentes_color`, `bigote_tam` | | |
-| `mano_der` / `mano_izq` | `taza` \| `taza_jefe` \| `cuchara` \| `telefono` | objeto pegado a la mano |
-| `boca_ganancia` | 1.0 | cuánto abre la boca con su voz (Mariana usó 0.9) |
+| `mano_der` / `mano_izq` | `taza` \| `taza_jefe` \| `cuchara` \| `telefono` | objeto en la mano; `blocking` → `objeto_der`/`objeto_izq` (0/1) lo saca o lo guarda |
+| `voz_db` | 0 | sube o baja esa voz en la mezcla (dB) |
+| `boca_ganancia` | 1.0 | cuánto abre la boca con su voz (0.9 = un poco menos) |
 
-Santi (aprobado):
+Ejemplo neutro:
 ```json
-"SANTI": {"tipo": "humano", "voz": "qGrxMQgsw74f3cWR4I0K", "postura": "sentado", "lugar": "principal",
-  "cara": {"preset": "A", "nariz": 0.88, "ojos_color": "#4A2A18"}, "piel": "#D4956C",
-  "pelo": {"estilo": "copete", "color": "#1A1511"},
-  "ropa": {"estilo": "camiseta", "torso": "#D6C7A8", "piernas": "#3C4250", "zapatos": "#ECE5D8"},
-  "accesorios": ["gafete", "lunares"]}
+"PROTA": {"tipo": "humano", "voz": "", "postura": "sentado", "lugar": "principal",
+  "cara": {"preset": "A", "nariz": 0.9, "ojos_color": "#3A2414"}, "piel": "#C98E6A",
+  "pelo": {"estilo": "corto", "color": "#2B211B"},
+  "ropa": {"estilo": "sueter", "torso": "#6F8A9B", "piernas": "#3C4250", "zapatos": "#E4DCCC"},
+  "accesorios": ["gafete"]}
 ```
-Jefe (aprox. al de v3): `"postura": "parado", "complexion": "robusto", "cara": {"preset": "cuadrada"}, "piel": "#D29C80",
-"pelo": {"estilo": "atras", "color": "#B9B4AB"}, "ropa": {"estilo": "saco", "torso": "#262830", "piernas": "#262830",
-"zapatos": "#1E1714"}, "accesorios": ["corbata", "bigote", "barba"], "mano_der": "taza_jefe"`.
+Un jefe de pie: `"postura": "parado", "complexion": "robusto", "cara": {"preset": "cuadrada"}, "pelo": {"estilo": "atras"},
+"ropa": {"estilo": "saco", ...}, "accesorios": ["corbata", "bigote"]`.
+
+## Avatares: el usuario, alguien neutro, una mascota o un producto
+
+- **El propio usuario**: pídele 1-2 fotos de frente y modela su versión de plastilina: tono de piel, forma de cara
+  (`cara.preset`, `nariz`, `ojos_color`, `cejas`), pelo (estilo y color), ropa y accesorios que lo identifiquen
+  (lentes, barba, lunares). Itera con `--retratos` hasta que diga «sí soy yo». No copies rasgos de otra persona.
+- **Personaje neutro**: rasgos y ropa inventados; varía edad, género y tono de piel en el elenco.
+- **Mascota**: `"tipo": "mascota"` con `forma` (`blob`, `pan`, `gota`, `fantasma`, `bot`, `caja`, `ballena`,
+  `estrella`) y sus colores. Para la mascota de una marca, sus colores exactos.
+- **Producto que habla**: empieza con una mascota genérica de forma parecida (`caja` para un empaque, `gota` para una
+  botella o un frasco, `bot` para un aparato) y sus colores. Si el chiste depende de su forma o logo exactos, crea una
+  clase nueva en `engine/characters/mascots.py` (copia el patrón de `DeepSeekBallena` o `NuevoModelo`: cuerpo, ojos,
+  boca que abre con la voz, brazos opcionales) y regístrala en `build()`. Usa siempre su logo y forma reales.
+- **IA de marca**: hay clases listas (abajo). Una nueva sigue el mismo patrón, con su propio logo.
 
 ## Mascotas de IA
 

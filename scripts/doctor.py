@@ -4,6 +4,8 @@
 #   python3 doctor.py --prueba        además hace un render real chiquito en Blender (EEVEE) para confirmar que todo corre
 #   python3 doctor.py --json          resultado en JSON (para el agente)
 #   python3 doctor.py --blender       solo imprime la ruta de Blender (para  B=$(python3 doctor.py --blender))
+#   --voces api|mcp|grabadas          cómo se harán las voces (mcp = el MCP de ElevenLabs del agente: no pide llave)
+#   --tiempos api|mcp|whisper|archivo cómo se sacan los tiempos de palabra (AssemblyAI, Scribe por MCP, Whisper local…)
 # Nunca imprime llaves. No instala nada por su cuenta: dice el comando exacto para cada sistema.
 import importlib, json, os, platform, shutil, subprocess, sys, tempfile, urllib.request
 
@@ -50,6 +52,11 @@ def run(cmd, timeout=60):
         return r.returncode, r.stdout + r.stderr
     except Exception as e:
         return 1, str(e)
+
+
+def opt(name, default):
+    a = sys.argv[1:]
+    return a[a.index(name) + 1] if name in a and a.index(name) + 1 < len(a) else default
 
 
 def main():
@@ -103,14 +110,32 @@ def main():
         add('Blender 5.x', False, 'no lo encontré (ni en $BLENDER ni en las rutas típicas)',
             how('blender') + '. Si está en otra carpeta, exporta  BLENDER=/ruta/al/ejecutable')
 
-    # 5. llaves (nunca se imprimen)
+    # 5. voces y tiempos de palabra: por API (llaves), por el MCP de ElevenLabs del agente, grabadas o Whisper local
     origin = entorno.load_keys()
     online = '--en-linea' in argv
-    for key, label, fixk in (('ELEVENLABS_API_KEY', 'Llave de ElevenLabs (voces)', 'eleven'),
-                             ('ASSEMBLYAI_API_KEY', 'Llave de AssemblyAI (tiempos de cada palabra)', 'assembly')):
+    voces = opt('--voces', 'api')            # api | mcp | grabadas
+    tiempos = opt('--tiempos', 'api')        # api | mcp | whisper | archivo
+    if voces != 'api':
+        add('Voces', True, {'mcp': 'con el MCP de ElevenLabs de tu agente (tts.py --plan / --registrar)',
+                            'grabadas': 'grabadas por ti en audio/lineas (tts.py --plan / --registrar)'}.get(voces, voces))
+    if tiempos == 'whisper':
+        try:
+            importlib.import_module('faster_whisper')
+            add('Tiempos de palabra', True, 'Whisper local (faster-whisper)')
+        except Exception:
+            add('Tiempos de palabra', False, 'falta faster-whisper', f'{PY} -m pip install --user faster-whisper')
+    elif tiempos != 'api':
+        add('Tiempos de palabra', True, 'importados con transcribe.py --importar (MCP de ElevenLabs/Scribe u otra herramienta)')
+    for key, label, fixk, route in (('ELEVENLABS_API_KEY', 'Llave de ElevenLabs (voces)', 'eleven', voces),
+                                    ('ASSEMBLYAI_API_KEY', 'Llave de AssemblyAI (tiempos de cada palabra)', 'assembly', tiempos)):
+        if route != 'api':
+            continue
         val = os.environ.get(key)
         if not val:
-            add(label, False, 'no está en el entorno ni en ningún .env', how(fixk))
+            alt = (' Sin llave: si tu agente tiene el MCP de ElevenLabs conectado, corre doctor con --voces mcp '
+                   '(o --voces grabadas).' if fixk == 'eleven' else
+                   ' Sin llave: --tiempos mcp (Scribe del MCP de ElevenLabs) o --tiempos whisper (local, gratis).')
+            add(label, False, 'no está en el entorno ni en ningún .env', how(fixk) + '.' + alt)
             continue
         detail = f'encontrada ({"en " + origin[key] if origin.get(key) != "entorno" else "en el entorno"})'
         ok = True

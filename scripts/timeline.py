@@ -47,9 +47,11 @@ parts, lines, t = [], [], lead          # parts = (inicio en s, audio); una paus
 for i, ln in enumerate(guion['lineas'], 1):
     who, text = ln[0], ln[1]
     pause = float(ln[2]) if len(ln) > 2 else 0.2
-    src = os.path.join(L, f'{i:02d}_{who}.mp3')
-    if not os.path.exists(src):
-        sys.exit(f'falta {src}: corre scripts/tts.py')
+    cands = [f for f in glob.glob(os.path.join(L, f'{i:02d}_{who}.*')) if f.endswith(('.mp3', '.wav', '.m4a'))]
+    if not cands:
+        sys.exit(f'falta audio/lineas/{i:02d}_{who}.mp3 (o .wav/.m4a): genérala con scripts/tts.py, el MCP de ElevenLabs '
+                 f'o grábala (python3 tts.py <proyecto> --plan lista lo que falta)')
+    src = cands[0]
     x = trim(load(src))
     db = float((cast.get(who) or {}).get('voz_db', 0.0))      # cast.json: "voz_db": 6 sube esa voz 6 dB
     if db:

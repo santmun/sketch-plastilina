@@ -89,10 +89,12 @@ $B -b -P $SK/scripts/pose_search.py -- --project <dir> --quien CHEF --lado L --z
 Zonas: `nuca`, `mejilla`, `boca`, `pecho`. Queda en `gestos_custom` y se usa como cualquier gesto. Si no hay
 solución, prueba la otra mano (un objeto en la mano —la cuchara del chef— choca con la cara).
 
-## Lo que hizo «A escondidas» (referencia)
+## Ideas de actuación que ya funcionaron
 
-Clawd cambió de escondite con la historia: bajo el escritorio → asomado → regazo → escritorio tras el teclado →
-junto a la pantalla («De mí») → junto a la taza (Mariana) → cajón con una pata afuera (entra el jefe) → asoma un
-ojo en el duelo → asoma ojos y boca para pelear con ChatGPT. Santi giró la silla −165° hacia el jefe. ChatGPT en el
-hombro izquierdo del jefe, inclinándose para susurrarle. El código original de esa actuación (hecha a mano) está en
-`assets/ejemplo-a-escondidas/perf.py` como referencia de timing fino.
+- Una mascota cambia de escondite con la historia: bajo el escritorio → asomada → en el regazo → sobre el escritorio
+  → en un cajón con una pata afuera cuando entra alguien → asoma un ojo.
+- Un humano gira la silla (`giro`) para enfrentar a quien entra.
+- Una IA en el hombro de alguien se inclina para susurrarle (`acciones: susurra`).
+- Varios juguetes que reviven cuando se van los humanos (`inerte` 1 → 0) y caen al oír pasos (`inerte` 0 → 1);
+  el nuevo cae tarde porque no sabe.
+- Un personaje saca el celular (`objeto_der`) para leer algo en voz alta mientras todos voltean a ver a otro.
