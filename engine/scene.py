@@ -447,6 +447,7 @@ if arg('--motor-cycles'):
             for ln in list(w.node_tree.links):
                 if ln.to_socket.name == 'Volume':
                     w.node_tree.links.remove(ln)
+    SC.render.use_persistent_data = True     # no re-sincroniza toda la escena en cada cuadro (~3 s menos por cuadro)
     SC.frame_start, SC.frame_end = 0, prj.n_frames - 1
     SC.render.fps = FPS
     print(f'[cycles] {cy.samples} muestras, cuadros 0-{prj.n_frames - 1}', flush=True)
